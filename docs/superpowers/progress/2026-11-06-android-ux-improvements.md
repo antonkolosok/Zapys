@@ -1,0 +1,122 @@
+# Android UX improvements — execution ledger
+
+Plan: `docs/superpowers/plans/2026-11-06-android-ux-improvements.md`.
+Spec: `docs/superpowers/specs/2026-11-06-android-ux-improvements.md`.
+
+Prepared 2026-11-06. Observed baseline HEAD `384f290`; no implementation of this batch has been performed by the preparation chat. Recheck Git state before execution.
+
+## Preflight
+
+- Superpowers in executing local Codex: VERIFIED; required skill directories exist and coordinator/reviewer loaded actual applicable files.
+- Feature branch: feat/android-ux-improvements created from 384f290 with approved Git escalation. Commit access still to be verified. GitHub CLI api user returned antonkolosok (exit 0).
+- Fresh baseline: common Gradle gate running. No connected device; SDK inspection confirms emulator/system image absent. Approved installation is running; no runtime PASS claimed.
+- Preparation/rules commit: PENDING.
+- Aggregate PR: NOT CREATED; only after all ten task gates.
+
+| Task | Deliverable | Status | Test evidence | Independent review | Commit |
+| --- | --- | --- | --- | --- | --- |
+| 1 | Monday/date-selector alignment | PENDING | — | — | — |
+| 2 | Settings/nav alignment | PENDING | — | — | — |
+| 3 | Preset and custom-color palette | PENDING | — | — | — |
+| 4 | Ukrainian phone validation | PENDING | — | — | — |
+| 5 | Separate 50-character name limits | PENDING | — | — | — |
+| 6 | Contact picker at top | PENDING | — | — | — |
+| 7 | Recipient removal and selected-client precedence | PENDING | — | — | — |
+| 8 | Planned status by default | PENDING | — | — | — |
+| 9 | Calendar move/drag | PENDING | — | — | — |
+| 10 | Week mode by default | PENDING | — | — | — |
+
+For each task append commands, exit codes, executed test counts, device details, reviewer verdict and actual commit SHA. Record blockers explicitly. Do not mark a task complete based only on authored tests, code review, compilation or another agent's unsupported claim.
+
+
+## Execution preflight review and accepted rulings
+
+# Android UX preflight review — 2026-11-06
+
+Read-only product review. No builds, tests, Git mutations or product edits performed. This report is source/document evidence, not runtime verification.
+
+Loaded actual `AGENTS.md`, Superpowers `using-superpowers` (subagent exemption applies), `subagent-driven-development`, its `references/preflight.md`, and `requesting-code-review`. Read the spec, plan, handoff, prepared ledger, status/verification documents and relevant Android source.
+
+## Findings and rulings
+
+Coordinator accepted the rulings below on 2026-11-06, including the narrow Task 9 snapshot-preserving persistence path. Authority is explicit: current user instructions/AGENTS take precedence over skill process defaults; the current specification takes precedence over implementation-plan omissions and existing code behavior. Thus spec section 9's preserve-all-fields requirement wins over naively reusing a save operation that refreshes snapshots. Coordinator separately reports branch `feat/android-ux-improvements` created at `384f290` and working CLI authentication; baseline checks and emulator setup are in progress, with no PASS asserted by this report.
+
+1. **Important — Task 9 persistence currently changes snapshots.** Spec section 9 requires preservation of all non-date/time fields, explicitly snapshots. The plan mandates using existing transactional persist/ConflictException flow. `SQLiteRepository.saveAppointment` currently copies current client display name, phone and color onto the appointment before writing. Thus moving a historical appointment with differing stored snapshots changes metadata, even if `CalendarGeometry.move` is correct. Proposed ruling: preserve the existing transactional conflict/reminder machinery but add a narrowly scoped move operation that loads/validates the current record and changes only date/start/end. Extend Task 9 affected files to repository/interface as needed; do not globally alter editor save semantics. Add a persistence test with current client values deliberately different from appointment snapshots, including missing/legacy client cases appropriate to existing data rules. Cost if wrong: extra Task 9 implementation/review, rather than silent history alteration.
+2. **Process precedence.** AGENTS requires tests and independent spec+quality review before the separate task commit. SDD's generic implementer-commits-first order does not apply. Proposed ruling: implementer supplies working diff/report; coordinator generates a review package that includes uncommitted task paths; after review/fixes/checks coordinator stages explicit paths and commits. Never claim a clean committed range excludes the actual uncommitted implementation. A blocked mandatory check/commit stops progression, overriding SDD continuous-execution language. Open Important/Critical findings cannot be parked at a skill cap to satisfy the stricter clean-review completion/PR gate.
+3. **Ledger ownership.** Plan identifies durable `docs/superpowers/progress/2026-11-06-android-ux-improvements.md`; SDD expects its own ignored workspace ledger identity. Proposed ruling: durable project ledger remains authoritative for resumable task states/SHAs/checks; initialize the SDD workspace ledger with the required plan identity and a clear pointer, keeping task completion checkpoints synchronized. Do not delete the durable ledger when cleaning scratch artifacts. Record this report's rulings in the active ledger before implementation.
+4. **Documentation file lists are minima.** Spec requires corresponding REQUIREMENTS and DESIGN updates in the task changing behavior. Per-task lists do not consistently list both. Proposed ruling: include both documents where their actual statements conflict (notably Task 7 recipient fields; Task 3 palette guidance), plus STATUS/ledger per task. Preserve explicit Android scope; do not overwrite iOS requirements silently. These are task-scoped documentation edits, not extra product tasks.
+5. **Task 3 restoration scope.** 'Restore unsaved selection on activity recreation' must include a custom pending dialog selection, not merely the closed control's committed color. Proposed ruling: keep dialog preview separate, restore pending hue/SV/null/selection state without callback, and test rotation with dialog open as well as form after confirmation. Confirmation of a new choice fires once; render/restore/cancel never fires.
+6. **Historical status is not current evidence.** Handoff/verification retain historical `384f290`, read-only Git and empty-remote observations. Plan correctly orders rechecking the actual session, so these are not inherent blockers. Proposed ruling: append dated current evidence and preserve the historical attribution; never reuse historical 84 tests as current PASS.
+
+## Internal task consistency scan
+
+| Task | Own text, specified code and checks | Finding / proposed ruling |
+| --- | --- | --- |
+| 1 | Independent full-width selector; separate gutter-aligned headings; measured widths/date callbacks and visual checks | Consistent. GUTTER remains 42f; test row/grid coordinates in the same coordinate space and preserve public CalendarScreen signature. |
+| 2 | Container-local navigation alignment; adaptive common bounds; full Settings label at scale 2.0 | Consistent. A fixed 48dp row would fail text accommodation; 48dp is minimum, not exact height. All four route callbacks/insets require real UI checks. |
+| 3 | Stateful shared control; four presets, custom hue/SV, null; unchanged public closure interface | Consistent with restoration ruling 5. Existing `identify(lastChild)` requires the last child to own/save all picker state under a stable ID. Existing arbitrary ARGB remains exact until a confirmed new opaque RGB choice. |
+| 4 | Pure normalizer, full/inline/contact validation, duplicate comparison, storage formatting retained | Consistent. Reject national part beginning zero, not just all-zero example; validate new/edited client writes, never reads or appointment's old client. Only valid fixtures are migrated; intentional invalid/legacy fixtures remain. |
+| 5 | 50 code points after trim per field; optional surname/patronymic; no truncation; focus first error | Consistent. Use helper across domain/UI/import/inline rather than maxLength UTF-16 filters. 'First' follows actual visible field order including phone. |
+| 6 | Button moved before fields; bindContactFields still called after construction; synthetic lifecycle tests | Consistent. Provider ownership/cancellation stays in MainActivity, ordering change does not justify replacing provider architecture. |
+| 7 | Both recipient removal and selected-ID precedence in one task; legacy JSON retained; retry fixture adapted | Consistent. `ReminderPreferences` reconstructed without recipient would erase old value; retain `original.reminder.recipient`. Hidden input must be ignored in error routing as well as prepare. |
+| 8 | Fresh PLANNED only; explicit non-draft enum list; persisted/in-memory DRAFT retained on render | Consistent. Initial Spinner callback must not overwrite DRAFT; primary-save maps separately. Tests requiring old fresh-draft behavior request DRAFT explicitly, retaining assertions. |
+| 9 | Immutable move geometry; long press vs resize; real ScrollView; transactional persistence and accessible action | Important snapshot conflict in finding 1. Extend affected files/checks before implementation; all metadata assertions must be at reopened repository boundary, not only pure copy. |
+| 10 | Initial mode week; restoration/navigation retain intentional day/date; no preference needed | Consistent. Change initial state, not every render. Verify Task 1 heading layout plus Task 9 interaction under the default week mode. |
+
+## Pair conflict scan
+
+Every pair is included, including documentation-only sharing. All tasks also share the durable progress ledger and STATUS. Shared production implementation must run sequentially; earlier task tests remain regression coverage.
+
+| Pair | Producer → consumer / shared files or interface | Finding / proposed ruling |
+| --- | --- | --- |
+| 1–2 | Calendar header and navigation → common available layout width; DESIGN | Compatible; measure each content coordinate space after navigation/insets. |
+| 1–3 | Selector → Theme.button; palette → Theme.colors; DESIGN | Shared Theme surface only. Keep Task 3 localized to colors and preserve header button styling. |
+| 1–4 | Calendar client display → validated client writes; shared docs/checks | No direct file conflict. Legacy phones remain readable in calendar. |
+| 1–5 | Calendar client display → names potentially over 50 combined; docs | No direct conflict. Do not assume displayName has 50-character ceiling. |
+| 1–6 | Calendar navigation vs client layout; shared ledger/STATUS only | No direct behavior dependency. |
+| 1–7 | Calendar snapshots/reminders vs client identity; DESIGN | Preserve date/header behavior while editor/client changes. |
+| 1–8 | Date tap creates persistent calendar DRAFT → editor status picker; DESIGN | Task 8 must preserve calendar DRAFT despite fresh-form PLANNED. |
+| 1–9 | CalendarScreen/header column geometry → CalendarView horizontal move date hit-testing; DESIGN | Preserve gutter and actual dates; move uses grid columns, not full-width selector cell geometry. |
+| 1–10 | Header selector/week headings → default mode; DESIGN | Compatible; week headings only week, full selector both. Run header regression after default change. |
+| 2–3 | Navigation → Theme.button; picker uses same Theme file; DESIGN | Color replacement must not globally alter buttons or navigation bounds. |
+| 2–4 | Insets/navigation → focusable validation fields; shared docs/checks | No direct production overlap; error focusing must remain usable above nav/IME. |
+| 2–5 | Insets/navigation → name validation UI; docs/checks | No direct conflict; retain adaptive rows and readable enlarged fields. |
+| 2–6 | MainActivity navigation/form ownership → contact form/provider; docs/checks | If Task 2 extracts navigation, preserve existing MainActivity contact lifecycle. |
+| 2–7 | Navigation/route state → appointment and reminders screens; DESIGN | Preserve four route keys and route lifecycle while forms change. |
+| 2–8 | Navigation editor opening → fresh status; DESIGN | No direct conflict; fresh status belongs draft factory, not navigation re-render. |
+| 2–9 | MainActivity shell/insets → calendar scroll/drag viewport; DESIGN | Real ScrollView test must retain viewport/insets; do not move gesture behavior into bottom navigation. |
+| 2–10 | MainActivity nav extraction → MainActivity calendarMode initial state; DESIGN | Same file, sequential. Task 10 preserves Task 2 nav integration and callbacks. |
+| 3–4 | Theme.colors → ClientsScreen form state/validation | Shared ClientsScreen possible caller edits. Task 4 must preserve arbitrary color on failed validation/recreation. |
+| 3–5 | Color form state → full client form name validation | Shared ClientsScreen possible. Invalid name must not reset color; no dirty callback from restored selection. |
+| 3–6 | Form hierarchy IDs/picker → reordered contact action | Shared ClientsScreen. Preserve stable identified child ordering/state restoration after button relocation. |
+| 3–7 | Color and reminder controls → recipient removal; ClientsScreen/DESIGN | Recipient removal must preserve color/pending form state and not shift restore identity incorrectly. |
+| 3–8 | Shared field restoration → editor status callback; DESIGN | Separate controls. Neither initial callback may dirty/mutate restored form. |
+| 3–9 | Arbitrary colors/client snapshots → moved calendar drawing; DESIGN | Move must preserve stored color, gradient and contrast; finding 1 applies. |
+| 3–10 | Theme/header navigation/default mode; DESIGN | Documentation sharing only; existing color checks remain. |
+| 4–5 | PhoneRules/error routing → PersonNameRules in Rules/ClientsScreen/AppointmentEditor/ClientFormValidationTest | Sequential shared validation. Name check ordering must keep phone routing correct; retain canonical duplicate comparison and unmodified formatting. |
+| 4–6 | Validating imported phone → contact action/lifecycle; ClientsScreen | Same validated save path; moving button cannot bypass phone checks or normalize stored formatting. |
+| 4–7 | Inline/full phone validation → authoritative selection; Rules/ClientsScreen/AppointmentEditor | Selected ID suppresses hidden invalid inline phone errors; blank-recipient change must not relax phone validation for actual client writes. |
+| 4–8 | Fresh PLANNED requires client → existing/inline client validation; AppointmentEditor | Fixtures need valid full phone only when creating clients. Existing legacy invalid phone does not block appointment save. |
+| 4–9 | Client write normalization → repository appointment move; REQUIREMENTS | Move is appointment update, must not revalidate or rewrite legacy client phone; finding 1 matters for preserved phone snapshots. |
+| 4–10 | Phone validation vs initial week; shared ledger/STATUS only | No direct dependency. |
+| 5–6 | Name limits → contact selected names; ClientsScreen/ClientFormValidationTest | Do not truncate imported over-limit names; preserve full text and reject/focus at save. |
+| 5–7 | Inline-name validation → hidden selected-client fields; Rules/ClientsScreen/AppointmentEditor | Hidden over-limit strings retained but ignored; switching to inline re-enables same rule. |
+| 5–8 | Required client/name → fresh PLANNED and explicit draft; AppointmentEditor | Preserve valid inline creation and explicit draft exceptions; do not alter model constructor status globally. |
+| 5–9 | Client names/snapshots → move metadata; REQUIREMENTS | Do not revalidate legacy over-limit name as part of moving appointment or refresh stored name snapshot. |
+| 5–10 | Name limits vs default mode; shared ledger/STATUS only | No direct dependency. |
+| 6–7 | Reordered contact picker → recipient field removal; ClientsScreen | Keep contact action directly under heading/back and selective name/phone updates; recipient removal must not erase existing property. |
+| 6–8 | Contact provider route ownership → appointment editor fresh status; shared docs/checks | No direct source overlap planned; retain pending provider ownership across editor navigation. |
+| 6–9 | Client form contact lifecycle vs calendar move; shared ledger/STATUS only | No direct dependency; no real contacts accessed in gesture tests. |
+| 6–10 | Contact return/recreation → MainActivity mode/date restoration | Intentional mode/date survives returning from client/contact flow where applicable; no reset on render. |
+| 7–8 | Authoritative existing ID/save-session retry → filtered status picker; AppointmentEditor/DESIGN | Initialize status without invoking hidden client validation. Retry uses persisted inline client ID for PLANNED or explicit DRAFT. |
+| 7–9 | Recipient-free manual reminder eligibility → moved appointment reminder rescheduling; REQUIREMENTS/DESIGN | Move tests after Task 7 use blank recipient, due/stale/cancelled rules and same transactional preservation. Never reopen obsolete recipient gate. |
+| 7–10 | Selection/restoration state → MainActivity calendar restoration; DESIGN | Preserve separate inline draft/client state and selected date/mode across return. |
+| 8–9 | DRAFT/non-draft persisted identities → move geometry/persistence; DESIGN | Move preserves status for all statuses including calendar DRAFT; never routes through fresh() or promotes to PLANNED. |
+| 8–10 | Fresh appointment editor → return to intentional calendar mode/date; DESIGN | Opening fresh PLANNED form does not reset chosen calendar mode; cancel/back retains it. |
+| 9–10 | Calendar week date columns/gesture → week default; DESIGN | Task 10 tests both fresh week and retained day; run Task 9 gesture/header checks afterward. |
+
+## Package against AGENTS
+
+The prepared package preserves all ten numbered task boundaries, task 7's two parts, test/review/commit gates, synthetic data, feature branch, one final unmerged PR and no release. Each task records acceptance criteria/files/checks before implementation. Both spec and plan forbid claiming device PASS from compilation. Handoff truthfully identifies preparation rather than implementation. No mandatory always-failing or assertion-free tests, mandated verbatim logic duplication, destructive migration, or new dependency/framework migration was found in plan text.
+
+Apply the proposed rulings before dispatching Task 1; finding 1 must be carried explicitly into the Task 9 brief and affected files. Rulings 2–3 are operational requirements before the first task. This scan does not establish baseline device/build/Git availability; coordinator owns that evidence and stop gates.

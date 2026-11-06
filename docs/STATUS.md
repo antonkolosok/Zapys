@@ -1,5 +1,21 @@
 # Zapys — поточний стан
 
+## 2026-11-06 — execution preflight in local Codex
+
+- Read AGENTS.md and the approved ten-task handoff/spec/plan. Actual Superpowers skills are available and loaded; independent preflight reviewer `/root/preflight_review` checked all ten tasks and task pairs. Accepted rulings are recorded in the active progress ledger.
+- Created `feat/android-ux-improvements` from `384f290` using the supported Git approval flow. GitHub CLI `api user --jq .login` returned `antonkolosok`, exit 0. Preserve unrelated `android/.idea/`.
+- Common Android baseline checks and emulator setup are in progress. Approved device discovery found no attached devices; installed SDK has Platform 35, Build Tools 35.0.0 and platform-tools, but no emulator/system image. No new test PASS or product-task completion is claimed.
+- Task 9 must preserve historical client snapshots through persistence; the existing editor save refreshes them. The accepted ruling adds a narrow move persistence path and a reopen regression test without changing editor save semantics.
+- Product tasks remain pending their test/review/commit gates. No PR, merge, auto-merge or release performed.
+
+## 2026-11-06 — новий пакет із 10 Android-поліпшень
+
+- Користувач затвердив нове правило для майбутньої роботи: кожен створений агент застосовує відповідні Superpowers skills; окрема задача → тести → незалежне рев'ю → окремий коміт. Один спільний PR лише після всіх задач; merge/auto-merge не виконувати. Правило записане в кореневому `AGENTS.md`.
+- Підготовлені специфікація `superpowers/specs/2026-11-06-android-ux-improvements.md`, покроковий план `superpowers/plans/2026-11-06-android-ux-improvements.md`, ledger `superpowers/progress/2026-11-06-android-ux-improvements.md` і стартове завдання `CODEX_HANDOFF.md` для нового локального Codex.
+- Два агенти з Superpowers виконали read-only аналіз календаря/навігації та форм/валідації. Виявлені важливі зв'язки: 42dp spacer відповідає gutter сітки; приховані inline-поля зараз можуть замінити вибраного клієнта; recipient перевіряється у domain/manual-reminder логіці; DRAFT не можна прибирати зі збереження разом із пунктом picker. План враховує ці зв'язки.
+- Свіжий локальний Git уже містить MVP-коміт `384f290` (`feat: add native local calendar MVP`), гілка `feat/local-mvp`; це новіше за попередні записи про untracked source. На момент початку підготовки сторонньою незбереженою зміною була `android/.idea/`; її не змінювали.
+- Усі десять продуктових задач поки **PENDING**: ця сесія готує передачу, оскільки не може виконати обов'язкові коміти через read-only `.git`. Код застосунку цим пакетом не змінений; нових тестових PASS, комітів, push або PR для пакета не заявлено. Виконання починається з preflight і task 1 у локальному Codex.
+
 ## 2026-11-06 — авторизація GitHub перевірена у двох середовищах
 
 - У звичайному PowerShell користувача `gh api user --jq .login` двічі повернула `antonkolosok`: авторизація CLI на комп'ютері працює. Повторний вхід не потрібний.
