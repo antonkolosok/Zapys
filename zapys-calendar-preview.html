@@ -1,0 +1,291 @@
+<div id="zapys-calendar-preview" class="viz-dotted-background" lang="uk">
+  <div class="zp-app">
+    <section id="zp-calendar-view">
+      <header class="zp-top">
+        <div class="zp-brand"><span class="zp-logo" aria-hidden="true">z</span><span>zapys</span></div>
+        <span class="zp-caption">Мій календар</span>
+      </header>
+      <div class="zp-monthbar">
+        <h2 id="zp-month"></h2>
+        <div class="zp-navigation"><button type="button" id="zp-prev" aria-label="Попередній тиждень">‹</button><button type="button" id="zp-today">Сьогодні</button><button type="button" id="zp-next" aria-label="Наступний тиждень">›</button></div>
+      </div>
+      <div id="zp-week" class="zp-week" aria-label="Дні тижня"></div>
+      <div class="zp-dayheading"><h3 id="zp-day-title"></h3><span class="zp-caption">День</span></div>
+      <div id="zp-selection" class="zp-selection" hidden>
+        <div><strong id="zp-selection-title"></strong><span id="zp-selection-time"></span></div>
+        <button type="button" id="zp-edit-selection" class="zp-small-button">Заповнити</button>
+        <button type="button" id="zp-remove-selection" class="zp-icon-button" aria-label="Видалити вибраний візит">×</button>
+      </div>
+      <div id="zp-timeline" class="zp-timeline" aria-label="Денний календар">
+        <div id="zp-hours" class="zp-hours" aria-hidden="true"></div>
+        <div id="zp-grid" class="zp-grid"><div id="zp-slots"></div><div id="zp-events" class="zp-events"></div></div>
+      </div>
+      <footer class="zp-footer"><button type="button" id="zp-new" class="zp-primary"><span aria-hidden="true">＋</span> Новий візит</button></footer>
+    </section>
+
+    <section id="zp-editor-view" hidden>
+      <header class="zp-editor-header"><button type="button" id="zp-back" class="zp-back">‹ Календар</button><span id="zp-editor-status" class="zp-pill">Чернетка</span></header>
+      <form id="zp-form" novalidate>
+        <div class="zp-form-intro"><h2 id="zp-editor-title">Новий візит</h2><span class="zp-caption">* Обов’язкові поля</span></div>
+        <section class="zp-section">
+          <label class="zp-field">Дата *<input id="zp-date" type="date" required></label>
+          <div class="zp-two">
+            <label class="zp-field">Початок *<input id="zp-start" type="time" required></label>
+            <label class="zp-field">Завершення *<input id="zp-end" type="time" required></label>
+          </div>
+          <div class="zp-duration"><span id="zp-duration">Укажіть час завершення</span><button type="button" id="zp-use-duration" class="zp-text-button" hidden>За послугами</button></div>
+        </section>
+        <section class="zp-section">
+          <h3>Клієнт</h3>
+          <label class="zp-field">Клієнтська база<select id="zp-client-select"><option value="">Новий клієнт</option></select></label>
+          <label class="zp-field">Ім’я *<input id="zp-name" type="text" maxlength="80" autocomplete="off" placeholder="Ім’я клієнта" required></label>
+          <label class="zp-field">Телефон *<input id="zp-phone" type="tel" maxlength="24" autocomplete="off" placeholder="+380 …" required></label>
+          <details class="zp-extra"><summary>Прізвище, по батькові та примітка</summary>
+            <div class="zp-two"><label class="zp-field">Прізвище<input id="zp-surname" type="text" maxlength="100" autocomplete="off"></label><label class="zp-field">По батькові<input id="zp-patronymic" type="text" maxlength="100" autocomplete="off"></label></div>
+            <label class="zp-field">Примітка про клієнта<textarea id="zp-client-note" rows="2" maxlength="2000"></textarea></label>
+          </details>
+        </section>
+        <section class="zp-section zp-services-section">
+          <div class="zp-section-heading"><h3>Послуги</h3><span id="zp-service-count" class="zp-pill">0 / 5</span></div>
+          <div id="zp-services"></div>
+          <label class="zp-field">Додати послугу<select id="zp-service-select"><option value="">Виберіть зі списку</option></select></label>
+          <div id="zp-service-limit" class="zp-field-hint" hidden>У візиті вже 5 послуг</div>
+          <button type="button" id="zp-new-service" class="zp-text-button">＋ Нова послуга</button>
+          <div id="zp-new-service-fields" class="zp-new-service-fields" hidden>
+            <label class="zp-field">Назва послуги *<input id="zp-service-name" type="text" maxlength="120" placeholder="Наприклад, консультація"></label>
+            <div class="zp-two"><label class="zp-field">Тривалість, хв<input id="zp-service-duration" type="number" min="1" max="1440" placeholder="Не вказано"></label><label class="zp-field">Ціна, грн<input id="zp-service-price" type="number" min="0" step="0.01" placeholder="Не вказано"></label></div>
+            <label class="zp-field">Текстова примітка<textarea id="zp-service-note" maxlength="2000" rows="2"></textarea></label>
+            <div id="zp-new-service-error" class="zp-error" role="alert" hidden></div>
+            <div class="zp-inline-actions"><button type="button" id="zp-add-service" class="zp-small-button">Додати до візиту</button><button type="button" id="zp-cancel-service" class="zp-text-button">Скасувати</button></div>
+          </div>
+          <div id="zp-total" class="zp-total" hidden></div>
+        </section>
+        <div id="zp-form-error" class="zp-error zp-form-error" role="alert" hidden></div>
+        <div class="zp-editor-actions"><button type="button" class="zp-primary" id="zp-save">Зберегти візит</button><button type="button" id="zp-delete" class="zp-delete" hidden>Видалити візит</button></div>
+      </form>
+    </section>
+    <div id="zp-toast" class="zp-toast" role="status" aria-live="polite" hidden></div>
+    <div id="zp-announcement" class="zp-sr" aria-live="polite"></div>
+  </div>
+</div>
+<style>
+  #zapys-calendar-preview {padding:20px 8px; background-color:transparent; font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; color-scheme:inherit; --zp-bg:light-dark(#f5f6f2,#141b17); --zp-surface:light-dark(#fffefa,#1c2520); --zp-ink:light-dark(#233a2c,#e8f1e9); --zp-muted:light-dark(#6a776d,#acb9ae); --zp-line:light-dark(#e4e9e0,#344039); --zp-primary:light-dark(#2f6047,#b3dbc0); --zp-onprimary:light-dark(#fffefa,#172d20); --zp-soft:light-dark(#e8f1e5,#2a3d30); --zp-draft:light-dark(#fbefcf,#443a22); --zp-draft-ink:light-dark(#785a1c,#f0d998); --zp-error:light-dark(#ac3b36,#ffaaa2); --zp-shadow:light-dark(#17312515,#00000033);}
+  #zapys-calendar-preview * {box-sizing:border-box;}
+  #zapys-calendar-preview [hidden] {display:none!important;}
+  #zapys-calendar-preview .zp-app {position:relative; max-width:430px; margin:0 auto; border:1px solid var(--zp-line); border-radius:28px; background:var(--zp-surface); color:var(--zp-ink); box-shadow:0 12px 48px var(--zp-shadow); overflow:clip; font-size:14px; line-height:1.45;}
+  #zapys-calendar-preview button,#zapys-calendar-preview input,#zapys-calendar-preview select,#zapys-calendar-preview textarea {font:inherit; color:inherit;}
+  #zapys-calendar-preview button {cursor:var(--cursor-interaction,pointer);}
+  #zapys-calendar-preview button:disabled {opacity:.5;cursor:not-allowed;}
+  #zapys-calendar-preview h2,#zapys-calendar-preview h3,#zapys-calendar-preview p {margin:0;}
+  #zapys-calendar-preview h2 {font-size:23px;line-height:1.25; font-weight:500; letter-spacing:-.7px;}
+  #zapys-calendar-preview h3 {font-size:15px;font-weight:500;}
+  #zapys-calendar-preview strong {font-weight:500;}
+  #zapys-calendar-preview .zp-top {display:flex;justify-content:space-between;align-items:center;padding:22px 22px 16px;}
+  #zapys-calendar-preview .zp-brand {display:flex;align-items:center;gap:9px;font-size:22px;letter-spacing:-.7px;font-weight:500;}
+  #zapys-calendar-preview .zp-logo {display:grid;place-items:center; width:30px;height:30px;border-radius:11px;background:var(--zp-primary);color:var(--zp-onprimary);font-size:25px;font-style:italic;}
+  #zapys-calendar-preview .zp-caption {font-size:12px;color:var(--zp-muted);}
+  #zapys-calendar-preview .zp-monthbar {display:flex;justify-content:space-between;align-items:center;gap:8px;padding:0 20px 15px;flex-wrap:wrap;}
+  #zapys-calendar-preview .zp-monthbar h2 {font-size:19px;letter-spacing:-.4px;}
+  #zapys-calendar-preview .zp-navigation {display:flex;align-items:center;gap:2px;}
+  #zapys-calendar-preview .zp-navigation button {border:0;background:transparent;min-width:32px;min-height:36px;padding:4px 7px;border-radius:10px;}
+  #zapys-calendar-preview .zp-navigation button:first-child,#zapys-calendar-preview .zp-navigation button:last-child {font-size:24px;}
+  #zapys-calendar-preview #zp-today {font-size:12px;}
+  #zapys-calendar-preview .zp-navigation button:hover {background:var(--zp-bg);}
+  #zapys-calendar-preview .zp-week {display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;padding:0 8px 15px;border-bottom:1px solid var(--zp-line);}
+  #zapys-calendar-preview .zp-day {background:transparent;border:0;border-radius:17px;min-height:64px;padding:7px 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;}
+  #zapys-calendar-preview .zp-day span:first-child {font-size:11px;color:var(--zp-muted);}
+  #zapys-calendar-preview .zp-day span:last-child {font-size:18px;line-height:1.2;font-weight:500;}
+  #zapys-calendar-preview .zp-day[aria-pressed="true"] {background:var(--zp-primary);color:var(--zp-onprimary);}
+  #zapys-calendar-preview .zp-day[aria-pressed="true"] span:first-child {color:var(--zp-onprimary);}
+  #zapys-calendar-preview .zp-dayheading {display:flex;justify-content:space-between;align-items:center;padding:15px 22px;}
+  #zapys-calendar-preview .zp-selection {display:flex;align-items:center;gap:8px;background:var(--zp-bg);padding:10px 15px;border-top:1px solid var(--zp-line);border-bottom:1px solid var(--zp-line);}
+  #zapys-calendar-preview .zp-selection>div {flex:1;min-width:0;}
+  #zapys-calendar-preview .zp-selection strong {display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  #zapys-calendar-preview .zp-selection span {display:block;font-size:12px;color:var(--zp-muted);font-variant-numeric:tabular-nums;}
+  #zapys-calendar-preview .zp-small-button {border:1px solid var(--zp-line);background:var(--zp-surface);border-radius:10px;padding:9px 12px;min-height:38px;font-size:13px;font-weight:500;}
+  #zapys-calendar-preview .zp-icon-button {border:0;background:transparent;border-radius:10px;width:36px;min-height:38px;font-size:22px;color:var(--zp-muted);}
+  #zapys-calendar-preview .zp-timeline {position:relative;margin:12px 16px 4px 12px;padding-bottom:18px;}
+  #zapys-calendar-preview .zp-hours {position:absolute;left:0;right:0;top:0;pointer-events:none;}
+  #zapys-calendar-preview .zp-hour {position:absolute;left:0;font-size:11px;color:var(--zp-muted);font-variant-numeric:tabular-nums;transform:translateY(-50%);}
+  #zapys-calendar-preview .zp-grid {position:relative;margin-left:42px;border-left:1px solid var(--zp-line);}
+  #zapys-calendar-preview .zp-slot {display:block;width:100%;border:0;border-top:1px solid var(--zp-line);background:transparent;padding:0;min-height:0;}
+  #zapys-calendar-preview .zp-slot.zp-half {border-top-style:dotted;}
+  #zapys-calendar-preview .zp-slot:hover {background:var(--zp-bg);}
+  #zapys-calendar-preview .zp-events {position:absolute;inset:0;pointer-events:none;}
+  #zapys-calendar-preview .zp-event {position:absolute;pointer-events:auto;background:var(--zp-soft);color:var(--zp-ink);border-radius:10px;border-left:3px solid var(--zp-primary);min-height:16px;}
+  #zapys-calendar-preview .zp-event.zp-draft {background:var(--zp-draft);color:var(--zp-draft-ink);border-left-color:var(--zp-draft-ink);}
+  #zapys-calendar-preview .zp-event.zp-selected {box-shadow:0 0 0 2px var(--zp-primary);z-index:4;}
+  #zapys-calendar-preview .zp-event-main {display:block;width:calc(100% - 37px);height:100%;min-height:0;text-align:left;border:0;border-radius:8px;padding:5px 7px;background:transparent;overflow:hidden;}
+  #zapys-calendar-preview .zp-event-main span {display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  #zapys-calendar-preview .zp-event-title {font-size:13px;font-weight:500;}
+  #zapys-calendar-preview .zp-event-time {font-size:11px;opacity:.85;font-variant-numeric:tabular-nums;}
+  #zapys-calendar-preview .zp-event.zp-short .zp-event-time {display:none;}
+  #zapys-calendar-preview .zp-resize {position:absolute;right:0;bottom:0;width:37px;height:min(44px,100%);padding:0;border:0;border-radius:0 0 9px 0;background:transparent;cursor:ns-resize;touch-action:none;display:flex;align-items:flex-end;justify-content:center;}
+  #zapys-calendar-preview .zp-resize::after {content:"";display:block;width:17px;height:4px;border-radius:3px;background:currentColor;opacity:.5;margin-bottom:6px;}
+  #zapys-calendar-preview .zp-resize:hover {background:color-mix(in srgb,var(--zp-primary) 12%,transparent);}
+  #zapys-calendar-preview .zp-footer {padding:14px 18px 18px;border-top:1px solid var(--zp-line);background:var(--zp-surface);}
+  #zapys-calendar-preview .zp-primary {display:flex;justify-content:center;align-items:center;gap:8px;border:0;background:var(--zp-primary);color:var(--zp-onprimary);border-radius:14px;padding:14px 18px;min-height:48px;width:100%;font-weight:500;}
+  #zapys-calendar-preview .zp-primary span {font-size:21px;line-height:1;}
+  #zapys-calendar-preview .zp-editor-header {display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--zp-line);}
+  #zapys-calendar-preview .zp-back {border:0;background:transparent;padding:8px 0;min-height:40px;color:var(--zp-primary);font-weight:500;}
+  #zapys-calendar-preview .zp-pill {font-size:11px;border-radius:20px;padding:4px 9px;background:var(--zp-bg);color:var(--zp-muted);white-space:nowrap;}
+  #zapys-calendar-preview .zp-form-intro {display:flex;align-items:center;justify-content:space-between;gap:10px;padding:20px 20px 0;flex-wrap:wrap;}
+  #zapys-calendar-preview .zp-section {padding:18px 20px;border-bottom:1px solid var(--zp-line);}
+  #zapys-calendar-preview .zp-section h3 {margin-bottom:12px;}
+  #zapys-calendar-preview .zp-field {display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--zp-muted);margin:0 0 13px;min-width:0;}
+  #zapys-calendar-preview .zp-field input,#zapys-calendar-preview .zp-field select,#zapys-calendar-preview .zp-field textarea {display:block;width:100%;min-width:0;max-width:100%;background:var(--zp-bg);border:1px solid var(--zp-line);border-radius:11px;padding:10px 11px;color:var(--zp-ink);font-size:16px;min-height:44px;}
+  #zapys-calendar-preview .zp-field input::placeholder,#zapys-calendar-preview .zp-field textarea::placeholder {color:var(--zp-muted);opacity:.8;}
+  #zapys-calendar-preview .zp-field textarea {resize:vertical;}
+  #zapys-calendar-preview .zp-two {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+  #zapys-calendar-preview .zp-duration {display:flex;align-items:center;justify-content:space-between;gap:7px;min-height:24px;color:var(--zp-muted);font-size:12px;font-variant-numeric:tabular-nums;}
+  #zapys-calendar-preview .zp-text-button {border:0;background:transparent;color:var(--zp-primary);padding:5px 0;text-align:left;font-size:13px;min-height:32px;}
+  #zapys-calendar-preview .zp-extra summary {color:var(--zp-primary);font-size:12px;padding:6px 0;cursor:var(--cursor-interaction,pointer);}
+  #zapys-calendar-preview .zp-extra[open] summary {margin-bottom:10px;}
+  #zapys-calendar-preview .zp-section-heading {display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;}
+  #zapys-calendar-preview .zp-section-heading h3 {margin:0;}
+  #zapys-calendar-preview .zp-service {margin-bottom:12px;padding:12px;background:var(--zp-bg);border-radius:12px;}
+  #zapys-calendar-preview .zp-service-heading {display:flex;justify-content:space-between;align-items:center;gap:5px;}
+  #zapys-calendar-preview .zp-service-name {font-size:14px;font-weight:500;overflow-wrap:anywhere;}
+  #zapys-calendar-preview .zp-service-meta {font-size:12px;color:var(--zp-muted);margin-bottom:3px;}
+  #zapys-calendar-preview .zp-service summary {font-size:12px;color:var(--zp-primary);padding:6px 0;cursor:var(--cursor-interaction,pointer);}
+  #zapys-calendar-preview .zp-service details[open] summary {margin-bottom:8px;}
+  #zapys-calendar-preview .zp-service .zp-field input,#zapys-calendar-preview .zp-service .zp-field textarea {background:var(--zp-surface);}
+  #zapys-calendar-preview .zp-service .zp-field:last-child {margin-bottom:0;}
+  #zapys-calendar-preview .zp-field-hint {font-size:12px;color:var(--zp-muted);margin:0 0 6px;}
+  #zapys-calendar-preview .zp-new-service-fields {border-top:1px solid var(--zp-line);margin-top:10px;padding-top:14px;}
+  #zapys-calendar-preview .zp-inline-actions {display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  #zapys-calendar-preview .zp-total {display:flex;justify-content:space-between;gap:12px;align-items:baseline;font-size:12px;color:var(--zp-muted);margin-top:14px;padding-top:14px;border-top:1px solid var(--zp-line);}
+  #zapys-calendar-preview .zp-total strong {color:var(--zp-ink);text-align:right;}
+  #zapys-calendar-preview .zp-error {color:var(--zp-error);font-size:13px;margin:8px 0 12px;}
+  #zapys-calendar-preview .zp-form-error {padding:0 20px;margin-top:16px;}
+  #zapys-calendar-preview [aria-invalid="true"] {border-color:var(--zp-error)!important;}
+  #zapys-calendar-preview .zp-editor-actions {padding:18px 20px;}
+  #zapys-calendar-preview .zp-delete {display:block;margin:12px auto 0;padding:9px;border:0;background:transparent;color:var(--zp-error);font-size:13px;}
+  #zapys-calendar-preview .zp-toast {position:absolute;left:18px;right:18px;top:17px;padding:12px 15px;background:var(--zp-ink);color:var(--zp-surface);border-radius:12px;box-shadow:0 4px 20px var(--zp-shadow);font-size:13px;z-index:20;pointer-events:none;}
+  #zapys-calendar-preview .zp-sr {position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+  @media(max-width:480px) {#zapys-calendar-preview{padding:8px 0;}#zapys-calendar-preview .zp-app{border-radius:20px;}#zapys-calendar-preview .zp-monthbar{padding-left:16px;padding-right:12px;}#zapys-calendar-preview .zp-top{padding-left:16px;padding-right:16px;}#zapys-calendar-preview .zp-week{gap:0;padding-left:5px;padding-right:5px;}}
+  @media(pointer:coarse) {#zapys-calendar-preview .zp-navigation button{min-height:44px;}#zapys-calendar-preview .zp-small-button,#zapys-calendar-preview .zp-icon-button,#zapys-calendar-preview .zp-text-button{min-height:44px;}#zapys-calendar-preview .zp-resize{width:44px;}#zapys-calendar-preview .zp-event-main{width:calc(100% - 44px);}}
+</style>
+<script>
+(() => {
+  const root=document.getElementById('zapys-calendar-preview');
+  const el=id=>root.querySelector('#'+id);
+  const clone=value=>JSON.parse(JSON.stringify(value));
+  const demoToday='2026-11-02';
+  const HOUR_HEIGHT=72;
+  const PX=HOUR_HEIGHT/60;
+  const clients=[
+    {id:'c1',name:'Олена',surname:'Коваль',patronymic:'',phone:'+380000000001',note:''},
+    {id:'c2',name:'Ірина',surname:'Мельник',patronymic:'',phone:'+380000000002',note:''},
+    {id:'c3',name:'Марія',surname:'Бондар',patronymic:'',phone:'+380000000003',note:''}
+  ];
+  const catalog=[
+    {id:'s1',name:'Стрижка',duration:45,price:600,note:''},
+    {id:'s2',name:'Фарбування',duration:90,price:1600,note:''},
+    {id:'s3',name:'Укладка',duration:30,price:450,note:''},
+    {id:'s4',name:'Догляд',duration:30,price:400,note:''},
+    {id:'s5',name:'Масаж голови',duration:15,price:250,note:''},
+    {id:'s6',name:'Консультація',duration:null,price:null,note:''}
+  ];
+  let events=[
+    {id:'a1',date:demoToday,start:570,end:630,client:clone(clients[0]),services:[clone(catalog[0])],draft:false},
+    {id:'a2',date:demoToday,start:720,end:765,client:clone(clients[1]),services:[clone(catalog[2])],draft:false},
+    {id:'a3',date:demoToday,start:900,end:990,client:clone(clients[2]),services:[clone(catalog[1])],draft:false}
+  ];
+  let currentDate=demoToday,weekStart=monday(demoToday),selectedId=null,editing=null,editingExisting=false,manualEnd=false,rangeStart=540,rangeEnd=1080,sequence=10,toastTimer;
+  function parseDate(s){return new Date(s+'T12:00:00Z');}
+  function dateString(d){return d.toISOString().slice(0,10);}
+  function addDays(s,n){const d=parseDate(s);d.setUTCDate(d.getUTCDate()+n);return dateString(d);}
+  function monday(s){return addDays(s,-((parseDate(s).getUTCDay()+6)%7));}
+  function time(n){return String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0');}
+  function minute(s){if(!s||!/^\d{2}:\d{2}$/.test(s))return null;const [h,m]=s.split(':').map(Number);return h<24&&m<60?h*60+m:null;}
+  function money(n){return new Intl.NumberFormat('uk-UA',{maximumFractionDigits:2}).format(n)+' грн';}
+  function durationLabel(n){return n>=60?Math.floor(n/60)+' год'+(n%60?' '+n%60+' хв':''):n+' хв';}
+  function fullName(c){return c?[c.name,c.surname].filter(Boolean).join(' '):'Новий візит';}
+  function announce(text){el('zp-announcement').textContent=text;}
+  function toast(text){clearTimeout(toastTimer);el('zp-toast').textContent=text;el('zp-toast').hidden=false;toastTimer=setTimeout(()=>el('zp-toast').hidden=true,2400);announce(text);}
+  function button(text,className){const b=document.createElement('button');b.type='button';b.textContent=text;if(className)b.className=className;return b;}
+  function getSelected(){return events.find(x=>x.id===selectedId);}
+  function showCalendar(){el('zp-editor-view').hidden=true;el('zp-calendar-view').hidden=false;render();}
+  function render(){renderWeek();renderCalendar();renderSelection();}
+  function renderWeek(){
+    const d=parseDate(currentDate);let month=new Intl.DateTimeFormat('uk-UA',{month:'long',year:'numeric',timeZone:'UTC'}).format(d);month=month.charAt(0).toUpperCase()+month.slice(1);el('zp-month').textContent=month;
+    const dayTitle=new Intl.DateTimeFormat('uk-UA',{weekday:'long',day:'numeric',month:'long',timeZone:'UTC'}).format(d);el('zp-day-title').textContent=dayTitle.charAt(0).toUpperCase()+dayTitle.slice(1);
+    const weekdays=['ПН','ВТ','СР','ЧТ','ПТ','СБ','НД'];el('zp-week').replaceChildren();
+    for(let i=0;i<7;i++){const date=addDays(weekStart,i),day=parseDate(date);const b=button('','zp-day');b.dataset.date=date;b.setAttribute('aria-pressed',String(date===currentDate));b.setAttribute('aria-label',new Intl.DateTimeFormat('uk-UA',{weekday:'long',day:'numeric',month:'long',timeZone:'UTC'}).format(day));const w=document.createElement('span');w.textContent=weekdays[i];const n=document.createElement('span');n.textContent=day.getUTCDate();b.append(w,n);b.addEventListener('click',()=>{currentDate=date;selectedId=null;render();});el('zp-week').append(b);}
+  }
+  function groupLanes(items){
+    const sorted=[...items].sort((a,b)=>a.start-b.start||a.end-b.end);let group=[],until=-1;const groups=[];
+    sorted.forEach(e=>{if(group.length&&e.start>=until){groups.push(group);group=[];until=-1;}group.push(e);until=Math.max(until,e.end);});if(group.length)groups.push(group);
+    const result=[];groups.forEach(g=>{const ends=[];const allocated=g.map(e=>{let lane=ends.findIndex(end=>end<=e.start);if(lane<0)lane=ends.length;ends[lane]=e.end;return {event:e,lane};});allocated.forEach(a=>result.push({...a,count:ends.length}));});return result;
+  }
+  function renderCalendar(){
+    const items=events.filter(e=>e.date===currentDate);rangeStart=Math.min(540,...items.map(e=>Math.floor(e.start/60)*60));rangeEnd=Math.max(1080,...items.map(e=>Math.ceil(e.end/60)*60));
+    el('zp-grid').style.height=(rangeEnd-rangeStart)*PX+'px';el('zp-hours').replaceChildren();el('zp-slots').replaceChildren();el('zp-events').replaceChildren();
+    for(let t=rangeStart;t<=rangeEnd;t+=60){const label=document.createElement('span');label.className='zp-hour';label.style.top=(t-rangeStart)*PX+'px';label.textContent=time(t);el('zp-hours').append(label);}
+    for(let t=rangeStart;t<rangeEnd;t+=30){const slot=button('','zp-slot'+(t%60?' zp-half':''));slot.style.height=30*PX+'px';slot.dataset.time=time(t);slot.setAttribute('aria-label','Новий візит о '+time(t));slot.addEventListener('click',ev=>{let start=t;if(ev.detail){const y=ev.clientY-slot.getBoundingClientRect().top;start=t+(y>=15*PX?15:0);}start=Math.min(start,1410);const appointment={id:'a'+sequence++,date:currentDate,start,end:start+30,client:null,services:[],draft:true};events.push(appointment);selectedId=appointment.id;render();announce('Створено чернетку: '+time(start)+'–'+time(start+30));});el('zp-slots').append(slot);}
+    groupLanes(items).forEach(({event:e,lane,count})=>{
+      const block=document.createElement('article');block.className='zp-event'+(e.draft?' zp-draft':'')+(e.id===selectedId?' zp-selected':'')+(e.end-e.start<40?' zp-short':'');block.dataset.eventId=e.id;block.dataset.start=time(e.start);block.dataset.end=time(e.end);block.style.top=(e.start-rangeStart)*PX+'px';block.style.height=Math.max(16,(e.end-e.start)*PX-3)+'px';block.style.left='calc('+lane/count*100+'% + 5px)';block.style.width='calc('+100/count+'% - 9px)';
+      const main=button('','zp-event-main');main.setAttribute('aria-label',fullName(e.client)+', '+time(e.start)+'–'+time(e.end)+', редагувати');
+      const title=document.createElement('span');title.className='zp-event-title';title.textContent=fullName(e.client);const when=document.createElement('span');when.className='zp-event-time';when.textContent=time(e.start)+'–'+time(e.end)+(e.services.length?' · '+e.services.map(s=>s.name).join(', '):' · Чернетка');main.append(title,when);main.addEventListener('click',()=>{selectedId=e.id;openEditor(e);});
+      const handle=button('','zp-resize');handle.setAttribute('aria-label','Змінити тривалість: '+fullName(e.client));handle.addEventListener('click',ev=>ev.stopPropagation());handle.addEventListener('pointerdown',ev=>startResize(ev,e,block,handle));handle.addEventListener('keydown',ev=>{if(ev.key==='ArrowUp'||ev.key==='ArrowDown'){ev.preventDefault();e.end=Math.min(1439,Math.max(e.start+15,e.end+(ev.key==='ArrowDown'?15:-15)));e.endManual=true;selectedId=e.id;render();root.querySelector('[data-event-id="'+e.id+'"] .zp-resize')?.focus();announce(time(e.start)+'–'+time(e.end));}});block.append(main,handle);el('zp-events').append(block);
+    });
+  }
+  function renderSelection(){const e=getSelected();el('zp-selection').hidden=!e||e.date!==currentDate;if(!e)return;el('zp-selection-title').textContent=fullName(e.client);el('zp-selection-time').textContent=time(e.start)+'–'+time(e.end)+' · '+durationLabel(e.end-e.start);el('zp-edit-selection').textContent=e.draft?'Заповнити':'Редагувати';}
+  function startResize(ev,event,block,handle){
+    if(ev.button!==0)return;ev.preventDefault();ev.stopPropagation();const startY=ev.clientY,originalEnd=event.end,originalManual=event.endManual;let dragged=false;selectedId=event.id;block.classList.add('zp-selected');handle.setPointerCapture(ev.pointerId);renderSelection();
+    const move=p=>{if(p.pointerId!==ev.pointerId)return;const delta=p.clientY-startY;if(Math.abs(delta)>3)dragged=true;if(!dragged)return;event.end=Math.min(1439,Math.max(event.start+15,Math.min(rangeEnd,Math.round((originalEnd+delta/PX)/15)*15)));event.endManual=true;block.style.height=Math.max(16,(event.end-event.start)*PX-3)+'px';block.classList.toggle('zp-short',event.end-event.start<40);block.dataset.end=time(event.end);block.querySelector('.zp-event-time').textContent=time(event.start)+'–'+time(event.end);renderSelection();};
+    const finish=p=>{if(p.pointerId!==ev.pointerId)return;if(p.type==='pointercancel'){event.end=originalEnd;event.endManual=originalManual;}handle.removeEventListener('pointermove',move);handle.removeEventListener('pointerup',finish);handle.removeEventListener('pointercancel',finish);if(handle.hasPointerCapture(ev.pointerId))handle.releasePointerCapture(ev.pointerId);render();announce('Час візиту: '+time(event.start)+'–'+time(event.end));};handle.addEventListener('pointermove',move);handle.addEventListener('pointerup',finish);handle.addEventListener('pointercancel',finish);
+  }
+  function openEditor(event){
+    editing=clone(event);editingExisting=events.some(e=>e.id===event.id);manualEnd=event.endManual??!event.draft;el('zp-toast').hidden=true;el('zp-form-error').hidden=true;root.querySelectorAll('[aria-invalid]').forEach(n=>n.removeAttribute('aria-invalid'));el('zp-form').reset();el('zp-form').querySelectorAll('details').forEach(d=>d.open=false);el('zp-new-service-fields').hidden=true;el('zp-new-service-error').hidden=true;
+    el('zp-date').value=editing.date;el('zp-start').value=time(editing.start);el('zp-end').value=editing.end!==null?time(editing.end):'';
+    el('zp-editor-title').textContent=event.draft?'Новий візит':'Візит';el('zp-editor-status').textContent=event.draft?'Чернетка':'Записано';el('zp-delete').hidden=!editingExisting;
+    el('zp-client-select').replaceChildren(new Option('Новий клієнт',''));clients.forEach(c=>el('zp-client-select').add(new Option(fullName(c),c.id)));el('zp-client-select').value=editing.client?.id||'';fillClient(editing.client);renderServices();updateTiming();el('zp-calendar-view').hidden=true;el('zp-editor-view').hidden=false;el('zp-editor-title').scrollIntoView({block:'nearest'});
+  }
+  function fillClient(c){el('zp-name').value=c?.name||'';el('zp-surname').value=c?.surname||'';el('zp-patronymic').value=c?.patronymic||'';el('zp-phone').value=c?.phone||'';el('zp-client-note').value=c?.note||'';}
+  function allDurations(){return editing&&editing.services.length>0&&editing.services.every(s=>Number.isFinite(s.duration)&&s.duration>0);}
+  function applyServiceDuration(force=false){if(allDurations()&&(!manualEnd||force)){const start=minute(el('zp-start').value);const total=editing.services.reduce((n,s)=>n+s.duration,0);if(start!==null&&start+total<1440){el('zp-end').value=time(start+total);manualEnd=false;}}updateTiming();}
+  function updateTiming(){const start=minute(el('zp-start').value),end=minute(el('zp-end').value);el('zp-duration').textContent=start!==null&&end!==null&&end>start?durationLabel(end-start):'Укажіть час завершення після початку';el('zp-use-duration').hidden=!allDurations();}
+  function updateServiceSummary(){
+    const selected=editing.services;el('zp-service-count').textContent=selected.length+' / 5';el('zp-service-select').disabled=selected.length>=5;el('zp-new-service').disabled=selected.length>=5;el('zp-service-limit').hidden=selected.length<5;el('zp-total').hidden=!selected.length;
+    const known=selected.filter(s=>s.price!==null&&Number.isFinite(s.price));const value=known.length?money(known.reduce((n,s)=>n+s.price,0))+(known.length<selected.length?' + не вказано':''):'Не вказано';el('zp-total').replaceChildren();const label=document.createElement('span');label.textContent='Вартість візиту';const total=document.createElement('strong');total.textContent=value;el('zp-total').append(label,total);
+    selected.forEach((s,i)=>{const m=el('zp-services').querySelector('[data-service-index="'+i+'"] .zp-service-meta');if(m)m.textContent=(s.duration===null?'Тривалість не вказана':s.duration+' хв')+' · '+(s.price===null?'Ціна не вказана':money(s.price));});updateTiming();
+  }
+  function field(labelText,type,value,change,settings={}){const label=document.createElement('label');label.className='zp-field';label.append(document.createTextNode(labelText));const input=document.createElement(type==='textarea'?'textarea':'input');if(type!=='textarea')input.type=type;else input.rows=2;input.value=value===null?'':value;Object.entries(settings).forEach(([k,v])=>input.setAttribute(k,String(v)));input.addEventListener('input',()=>change(input.value));label.append(input);return label;}
+  function renderServices(){
+    el('zp-services').replaceChildren();el('zp-service-select').replaceChildren(new Option('Виберіть зі списку',''));catalog.forEach(s=>{if(!editing.services.some(x=>x.id===s.id))el('zp-service-select').add(new Option(s.name,s.id));});
+    editing.services.forEach((service,index)=>{const box=document.createElement('div');box.className='zp-service';box.dataset.serviceIndex=index;const heading=document.createElement('div');heading.className='zp-service-heading';const title=document.createElement('span');title.className='zp-service-name';title.textContent=service.name;const remove=button('×','zp-icon-button');remove.setAttribute('aria-label','Прибрати послугу '+service.name);remove.addEventListener('click',()=>{editing.services.splice(index,1);renderServices();applyServiceDuration();});heading.append(title,remove);const meta=document.createElement('div');meta.className='zp-service-meta';const details=document.createElement('details');const summary=document.createElement('summary');summary.textContent='Змінити для цього візиту';const row=document.createElement('div');row.className='zp-two';
+      row.append(field('Тривалість, хв','number',service.duration,v=>{service.duration=v===''?null:Number(v);updateServiceSummary();applyServiceDuration();},{min:1,max:1440,placeholder:'Не вказано'}),field('Ціна, грн','number',service.price,v=>{service.price=v===''?null:Number(v);updateServiceSummary();},{min:0,step:'0.01',placeholder:'Не вказано'}));const note=field('Текстова примітка','textarea',service.note,v=>service.note=v,{maxlength:2000});details.append(summary,row,note);box.append(heading,meta,details);el('zp-services').append(box);
+    });updateServiceSummary();
+  }
+  function addService(service){if(editing.services.length>=5){announce('Можна додати не більше 5 послуг');return;}editing.services.push(clone(service));renderServices();applyServiceDuration();}
+  function formError(message,id){el('zp-form-error').textContent=message;el('zp-form-error').hidden=false;if(id){el(id).setAttribute('aria-invalid','true');el(id).focus();}}
+  function save(ev){
+    ev.preventDefault();el('zp-form-error').hidden=true;root.querySelectorAll('[aria-invalid]').forEach(n=>n.removeAttribute('aria-invalid'));
+    const date=el('zp-date').value,start=minute(el('zp-start').value),end=minute(el('zp-end').value),name=el('zp-name').value.trim(),phone=el('zp-phone').value.trim();
+    if(!date)return formError('Оберіть дату візиту.','zp-date');if(start===null)return formError('Укажіть час початку.','zp-start');if(end===null||end<=start)return formError('Час завершення має бути пізніше початку.','zp-end');if(!name)return formError('Укажіть ім’я клієнта.','zp-name');if(!phone)return formError('Укажіть телефон клієнта.','zp-phone');if(phone.replace(/\D/g,'').length<7)return formError('Перевірте номер телефону.','zp-phone');if(editing.services.length>5)return formError('Додайте не більше 5 послуг.');
+    if(editing.services.some(s=>s.duration!==null&&(!Number.isFinite(s.duration)||s.duration<=0||s.duration>1440)))return formError('Тривалість послуги має бути додатним числом або залишатися порожньою.');if(editing.services.some(s=>s.price!==null&&(!Number.isFinite(s.price)||s.price<0)))return formError('Ціна має бути невід’ємною або залишатися порожньою.');
+    const client={id:el('zp-client-select').value||'c'+sequence++,name,surname:el('zp-surname').value.trim(),patronymic:el('zp-patronymic').value.trim(),phone,note:el('zp-client-note').value};const ci=clients.findIndex(c=>c.id===client.id);if(ci<0)clients.push(clone(client));else clients[ci]=clone(client);
+    Object.assign(editing,{date,start,end,client,draft:false,endManual:manualEnd});const at=events.findIndex(e=>e.id===editing.id);if(at<0)events.push(clone(editing));else events[at]=clone(editing);selectedId=editing.id;currentDate=date;weekStart=monday(date);editing=null;showCalendar();toast('Візит збережено');el('zp-day-title').scrollIntoView({block:'nearest'});
+  }
+  function deleteEvent(id){events=events.filter(e=>e.id!==id);selectedId=null;editing=null;showCalendar();toast('Візит видалено');}
+  el('zp-prev').addEventListener('click',()=>{weekStart=addDays(weekStart,-7);currentDate=addDays(currentDate,-7);selectedId=null;render();});
+  el('zp-next').addEventListener('click',()=>{weekStart=addDays(weekStart,7);currentDate=addDays(currentDate,7);selectedId=null;render();});
+  el('zp-today').addEventListener('click',()=>{currentDate=demoToday;weekStart=monday(currentDate);selectedId=null;render();});
+  el('zp-new').addEventListener('click',()=>openEditor({id:'a'+sequence++,date:currentDate,start:600,end:null,client:null,services:[],draft:true}));
+  el('zp-back').addEventListener('click',()=>{editing=null;showCalendar();});
+  el('zp-edit-selection').addEventListener('click',()=>{const e=getSelected();if(e)openEditor(e);});
+  el('zp-remove-selection').addEventListener('click',()=>{const e=getSelected();if(e)deleteEvent(e.id);});
+  el('zp-client-select').addEventListener('change',()=>fillClient(clients.find(c=>c.id===el('zp-client-select').value)));
+  el('zp-service-select').addEventListener('change',()=>{const service=catalog.find(s=>s.id===el('zp-service-select').value);if(service)addService(service);});
+  el('zp-start').addEventListener('input',()=>applyServiceDuration());el('zp-end').addEventListener('input',()=>{manualEnd=true;updateTiming();});el('zp-use-duration').addEventListener('click',()=>applyServiceDuration(true));
+  el('zp-new-service').addEventListener('click',()=>{el('zp-new-service-fields').hidden=false;el('zp-new-service-error').hidden=true;el('zp-service-name').focus();});
+  el('zp-cancel-service').addEventListener('click',()=>el('zp-new-service-fields').hidden=true);
+  el('zp-add-service').addEventListener('click',()=>{
+    const name=el('zp-service-name').value.trim(),rawDuration=el('zp-service-duration').value,rawPrice=el('zp-service-price').value;const duration=rawDuration===''?null:Number(rawDuration),price=rawPrice===''?null:Number(rawPrice);let error='';if(!name)error='Укажіть назву послуги.';else if(duration!==null&&(!Number.isFinite(duration)||duration<=0||duration>1440))error='Перевірте тривалість послуги.';else if(price!==null&&(!Number.isFinite(price)||price<0))error='Перевірте ціну.';if(error){el('zp-new-service-error').textContent=error;el('zp-new-service-error').hidden=false;return;}if(editing.services.length>=5)return;
+    const service={id:'s'+sequence++,name,duration,price,note:el('zp-service-note').value};catalog.push(service);addService(service);['zp-service-name','zp-service-duration','zp-service-price','zp-service-note'].forEach(id=>el(id).value='');el('zp-new-service-fields').hidden=true;announce('Послугу додано');
+  });
+  el('zp-delete').addEventListener('click',()=>{if(editing)deleteEvent(editing.id);});el('zp-save').addEventListener('click',save);el('zp-form').addEventListener('submit',save);el('zp-form').addEventListener('input',ev=>{ev.target.removeAttribute('aria-invalid');el('zp-form-error').hidden=true;});render();
+})();
+</script>

@@ -1,0 +1,52 @@
+# Task 9 — independent iPhone calendar source review
+
+Reviewed 2026-11-03. Scope: task-9 brief/report/QA, captured iOS diff once, final CalendarView/AppointmentBlock and core calendar helpers, relevant DESIGN/REQUIREMENTS, and narrowly named integration dependencies (AppModel serial writes, SQLiteRepository conflict-before-write, AppointmentEditor creation route, ZapysApp navigation). Accepted the supplied ten-file source-membership audit; did not repeat it. Final CalendarView includes the selected/preview time range and startup model.error display. No production edits or test execution.
+
+## Verdict
+
+**Spec: changes requested. Quality: changes requested; native acceptance BLOCKED.** The principal calendar invariants are represented in source, but the independent test target has a compile error and agenda actions need isolation. Compact week presentation also falls short of the documented name/time display. Source review is neither a Swift compilation pass nor approval of gesture, rendered geometry, or accessibility behavior.
+
+## Ranked findings
+
+1. **P1 — test target cannot compile: `ios/Tests/ZapysCoreTests/IndependentCalendarTests.swift:29`.** `draft.services.isEmpty()` calls Array's Boolean property as a function. Replace with `draft.services.isEmpty`. This prevents executing the entire package test target, including the intended independent persistence checks. This is a source-level compile defect; no compiler was run.
+
+2. **P2 — isolate the two agenda actions: `ios/App/CalendarView.swift:69` and `:78`.** The editor button and end-time button share one List row and both retain the default automatic button style. SwiftUI's automatic List-row button handling can dispatch both row actions when either button is tapped, requesting editor navigation and an end sheet together. Give each action an explicit plain/borderless style (or separate actionable rows) and verify independent activation on iOS/VoiceOver. This is a concrete framework interaction risk identified from the final composition, not a claimed observed simulator result. It directly affects the required ordinary accessible end-time alternative.
+
+3. **P2 — compact week blocks omit their time: `ios/Sources/ZapysCore/CalendarPresentation.swift:18`, used by `ios/App/AppointmentBlock.swift:14`.** Whenever metadata cannot fit, the only first-row string is status plus client and subsequent rows are services. A normal 30-minute block (36 points) cannot fit even client plus metadata (48 points at the default row metric), so no time is included. The same presentation is used in week mode, contrary to DESIGN's week name/time requirement. The new selected-time line reveals the range after selection but does not supply it for unselected compact week blocks. Add a compact week representation carrying time without adding rows, inflating duration, or moving service centers; verify that status and client remain usable at narrow widths.
+
+## Strengths and spec trace
+
+- Day uses one real timeline column; week uses seven equal columns. Header remains outside the vertical scroll, Monday ordering and seven-day navigation are explicit, and header drilldown selects day mode. Today and date/mode state are owned by CalendarEntryView across pushed editor navigation.
+- Core geometry uses 1.2 points/minute and a 42-point gutter; event frames retain exact duration. Lane allocation reuses adjacent lanes, assigns connected groups their peak width count, separates dates and excludes cancelled records. Agenda retains cancelled records.
+- Empty-space creation constructs a real blank 30-minute draft with quarter-hour snapping and latest 23:29–23:59 clamp. Calendar persist uses AppModel.writeTyped; SQLiteRepository checks overlap before mutation. Only the explicit overlap action retries with allowOverlap and retains the same identity. Declining clears pending state. New still routes to the existing editor's blank-end form.
+- Resize preview uses an Appointment value copy, never a repository write. Native cancelled/failed recognition clears it; completion requires actual movement and opens confirmation, then the typed overlap gate if necessary. Original data is supplied to the editor and resize calculation. Window coordinates avoid feedback from a moving grip. These are source strengths, not proof of UIKit/SwiftUI gesture arbitration.
+- Gradient contributions retain ordered client/service centers, skip unset colors and extend the drawing span below clipped short blocks instead of squeezing hidden colors upward. Zero/one/multiple fills and opaque theme text backings are implemented. Row metrics scale with Dynamic Type; status remains in compact first-row text or metadata. The logical approach is sound; rendered alignment still needs device evidence.
+- Agenda contains ordered full service labels and an end action; blocks expose an accessibility end action as well. Success is announced only through the write completion. Persisted state remains on the serial database queue.
+
+## Verification gaps and bounded follow-up
+
+All five author helper tests and thirteen independent tests are **UNRUN**, as are native UI tests. Windows has no Swift/Xcode; this review did not retry unavailable tools. No app build, package compilation, simulator, screenshot, native runtime, or visual approval exists. The supplied membership audit records exactly one file reference, build reference, App-group entry and app Sources membership for each of ten app Swift files.
+
+After source fixes, required macOS evidence remains: package tests and app build; ordinary scrolling over selected grips, quick grip taps, hold-plus-move resizing and system cancellation; end-sheet-to-confirmation and confirmation-to-overlap alert transitions; unchanged originals after declines; draft persistence/reopen without orphan conflict inserts; week/drilldown/return state; 23:59; short multi-color clipped rows; light/dark and maximum Dynamic Type; and independent agenda/VoiceOver actions. The existing UI-test source covers only a simple creation acknowledgement and agenda end-sheet cancellation path, not these native acceptance cases.
+
+Additional non-blocking accessibility check: `AppointmentBlock.swift:43` exposes client/status/times/services but omits date and explicit service count, and header selection is conveyed visually without a selected accessibility trait. Confirm and complete the semantics required by DESIGN during native accessibility acceptance. No further outside-file or whole-branch audit was performed.
+
+## Fix 1 scoped re-review — 2026-11-03
+
+Reviewed `task-9-fix1.diff` and the changed final presentation/block source only, against the three findings above and new breakage caused by those changes. No unchanged tests were rerun; no whole-review expansion.
+
+- **Finding 1 resolved in source:** IndependentCalendarTests.swift:29 now reads the `isEmpty` property. This removes the identified source error; package compilation remains UNRUN.
+- **Finding 2 resolved in source:** CalendarView.swift:77–78 gives the editor `.plain` and end action `.borderless`, avoiding the default automatic List-row handling. Added native assertions check that the editor save action does not appear during/after the end sheet. Assertions are authored, not executed; action/VoiceOver isolation still needs native confirmation.
+- **Finding 3 resolved in source, with a new gradient regression below:** compact week rows now carry start time and abbreviated status/client inside the existing first logical row. The week argument is wired from CalendarView. Duration and service row positions remain unchanged. Six author helper test methods now exist, all UNRUN, alongside thirteen UNRUN independent methods.
+
+**New P2 — compact week client gradient anchor no longer matches its label (`ios/App/AppointmentBlock.swift:17`, `:32`–`:34`).** The new two-line first row places time in the upper half and client/status text in the lower half. With default rowHeight 22 and top padding 2, the client label's actual center is `2 + 3*22/4 = 18.5`, but the unchanged centers expression still places its color stop at `2 + 22/2 = 13`. Only the client anchor shifts; service centers remain unchanged. Update the first center when `compactTime != nil` to match the actual client text line, leaving all service centers (including clipped ones) untouched. Cover the compact-week actual center calculation rather than only checking helper label counts. This is a directly derived source geometry mismatch, not a rendered observation.
+
+**Updated spec/quality verdict: changes requested for the new P2 client-anchor regression.** The three original findings have source corrections. No additional new compile or save-wiring defect was identified in this delta. Native compilation, tests, drawing, gestures, accessibility and visual acceptance remain BLOCKED/UNRUN; all previous bounded native verification gaps still apply. The fixes do not authorize a runtime or visual pass.
+
+## Fix 2 scoped re-review — 2026-11-03
+
+Reviewed only `task-9-fix2.diff` (3,889 bytes) and its report addendum for the compact-week client-anchor finding and new breakage in this delta. No native tools or unchanged tests were rerun.
+
+**Fix-1 P2 resolved in source.** `CalendarRows.labelCenters(rowHeight:topPadding:)` now places the compact-week client center at `topPadding + 0.75 * rowHeight` and retains `topPadding + (index + 0.5) * rowHeight` for every service. AppointmentBlock calls that shared calculation. Default compact centers are therefore [18.5, 35, 57], ordinary centers [13, 35, 57], and scaled compact centers [35, 68, 112]. Unset services still retain their logical row without contributing a stop; hidden colored services remain below the clipping boundary. Ample week rows use ordinary centers. The seventh authored helper test exercises those concrete values through the calculation consumed by production.
+
+**Updated spec/quality verdict: scoped source review accepted; no unresolved ranked source findings from this review.** No new breakage was identified in the fix-2 delta. This supersedes the earlier changes-requested verdicts only at source-review level. All seven author helper methods, thirteen independent methods and native UI tests remain UNRUN. Package/app compilation, rendered gradient alignment, narrow-column readability, gesture arbitration, persistence UI behavior and accessibility acceptance remain BLOCKED pending the previously listed macOS/device evidence. No native runtime or visual approval is granted.
