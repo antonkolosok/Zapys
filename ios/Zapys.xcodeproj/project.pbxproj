@@ -1,0 +1,64 @@
+// !$*UTF8*$!
+{ archiveVersion = 1; classes = {}; objectVersion = 56; objects = {
+000000000000000000000064 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZapysApp.swift; sourceTree = "<group>"; };
+0000000000000000000000C8 = { isa = PBXBuildFile; fileRef = 000000000000000000000064; };
+000000000000000000000065 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+0000000000000000000000C9 = { isa = PBXBuildFile; fileRef = 000000000000000000000065; };
+000000000000000000000066 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+0000000000000000000000CA = { isa = PBXBuildFile; fileRef = 000000000000000000000066; };
+000000000000000000000067 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientsView.swift; sourceTree = "<group>"; };
+0000000000000000000000CB = { isa = PBXBuildFile; fileRef = 000000000000000000000067; };
+000000000000000000000068 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServicesView.swift; sourceTree = "<group>"; };
+0000000000000000000000CC = { isa = PBXBuildFile; fileRef = 000000000000000000000068; };
+000000000000000000000069 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+0000000000000000000000CD = { isa = PBXBuildFile; fileRef = 000000000000000000000069; };
+00000000000000000000006E = { isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+0000000000000000000000D2 = { isa = PBXBuildFile; fileRef = 00000000000000000000006E; };
+00000000000000000000006F = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZapysUITests.swift; sourceTree = "<group>"; };
+0000000000000000000000D3 = { isa = PBXBuildFile; fileRef = 00000000000000000000006F; };
+000000000000000000000070 = { isa = PBXFileReference; explicitFileType = wrapper.application; path = Zapys.app; sourceTree = BUILT_PRODUCTS_DIR; };
+000000000000000000000071 = { isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = ZapysUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+000000000000000000000072 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppointmentEditor.swift; sourceTree = "<group>"; };
+0000000000000000000000D5 = { isa = PBXBuildFile; fileRef = 000000000000000000000072; };
+000000000000000000000073 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
+0000000000000000000000D6 = { isa = PBXBuildFile; fileRef = 000000000000000000000073; };
+000000000000000000000074 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
+0000000000000000000000D7 = { isa = PBXBuildFile; fileRef = 000000000000000000000074; };
+000000000000000000000075 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppointmentBlock.swift; sourceTree = "<group>"; };
+0000000000000000000000D8 = { isa = PBXBuildFile; fileRef = 000000000000000000000075; };
+000000000000000000000076 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactPicker.swift; sourceTree = "<group>"; };
+0000000000000000000000D9 = { isa = PBXBuildFile; fileRef = 000000000000000000000076; };
+000000000000000000000077 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderCoordinator.swift; sourceTree = "<group>"; };
+0000000000000000000000DA = { isa = PBXBuildFile; fileRef = 000000000000000000000077; };
+000000000000000000000078 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
+0000000000000000000000DB = { isa = PBXBuildFile; fileRef = 000000000000000000000078; };
+000000000000000000000079 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindersView.swift; sourceTree = "<group>"; };
+0000000000000000000000DC = { isa = PBXBuildFile; fileRef = 000000000000000000000079; };
+00000000000000000000000A = { isa = PBXGroup; children = (000000000000000000000076,000000000000000000000077,000000000000000000000078,000000000000000000000079,000000000000000000000074,000000000000000000000075,000000000000000000000073,000000000000000000000072,000000000000000000000064,000000000000000000000065,000000000000000000000066,000000000000000000000067,000000000000000000000068,000000000000000000000069,00000000000000000000006E,); path = App; sourceTree = "<group>"; };
+00000000000000000000000B = { isa = PBXGroup; children = (00000000000000000000006F,); path = UITests; sourceTree = "<group>"; };
+00000000000000000000000C = { isa = PBXGroup; children = (000000000000000000000070,000000000000000000000071,); name = Products; sourceTree = "<group>"; };
+00000000000000000000000D = { isa = PBXGroup; children = (00000000000000000000000A,00000000000000000000000B,00000000000000000000000C,); sourceTree = "<group>"; };
+000000000000000000000014 = { isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (0000000000000000000000D9,0000000000000000000000DA,0000000000000000000000DB,0000000000000000000000DC,0000000000000000000000D7,0000000000000000000000D8,0000000000000000000000D6,0000000000000000000000D5,0000000000000000000000C8,0000000000000000000000C9,0000000000000000000000CA,0000000000000000000000CB,0000000000000000000000CC,0000000000000000000000CD,); runOnlyForDeploymentPostprocessing = 0; };
+000000000000000000000015 = { isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (0000000000000000000000D2,); runOnlyForDeploymentPostprocessing = 0; };
+000000000000000000000016 = { isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (0000000000000000000000D4,); runOnlyForDeploymentPostprocessing = 0; };
+000000000000000000000017 = { isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (0000000000000000000000D3,); runOnlyForDeploymentPostprocessing = 0; };
+0000000000000000000000D4 = { isa = PBXBuildFile; productRef = 00000000000000000000001F; };
+00000000000000000000001E = { isa = XCLocalSwiftPackageReference; relativePath = "."; };
+00000000000000000000001F = { isa = XCSwiftPackageProductDependency; package = 00000000000000000000001E; productName = ZapysCore; };
+000000000000000000000028 = { isa = PBXNativeTarget; buildConfigurationList = 000000000000000000000033; buildPhases = (000000000000000000000014,000000000000000000000016,000000000000000000000015,); buildRules = (); dependencies = (); name = Zapys; packageProductDependencies = (00000000000000000000001F,); productName = Zapys; productReference = 000000000000000000000070; productType = "com.apple.product-type.application"; };
+000000000000000000000029 = { isa = PBXNativeTarget; buildConfigurationList = 000000000000000000000034; buildPhases = (000000000000000000000017,); buildRules = (); dependencies = (00000000000000000000002B,); name = ZapysUITests; productName = ZapysUITests; productReference = 000000000000000000000071; productType = "com.apple.product-type.bundle.ui-testing"; };
+00000000000000000000002A = { isa = PBXContainerItemProxy; containerPortal = 000000000000000000000001; proxyType = 1; remoteGlobalIDString = 000000000000000000000028; remoteInfo = Zapys; };
+00000000000000000000002B = { isa = PBXTargetDependency; target = 000000000000000000000028; targetProxy = 00000000000000000000002A; };
+000000000000000000000050 = { isa = XCBuildConfiguration; name = Debug; buildSettings = { SDKROOT = iphoneos; IPHONEOS_DEPLOYMENT_TARGET = 17.0; SWIFT_VERSION = 5.0; SWIFT_OPTIMIZATION_LEVEL = "-Onone"; CLANG_ENABLE_MODULES = YES; }; };
+000000000000000000000052 = { isa = XCBuildConfiguration; name = Debug; buildSettings = { PRODUCT_BUNDLE_IDENTIFIER = ua.zapys.local; PRODUCT_NAME = "$(TARGET_NAME)"; INFOPLIST_FILE = App/Info.plist; ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; TARGETED_DEVICE_FAMILY = 1; CODE_SIGN_STYLE = Automatic; }; };
+000000000000000000000054 = { isa = XCBuildConfiguration; name = Debug; buildSettings = { PRODUCT_BUNDLE_IDENTIFIER = ua.zapys.local.uitests; PRODUCT_NAME = "$(TARGET_NAME)"; GENERATE_INFOPLIST_FILE = YES; TARGETED_DEVICE_FAMILY = 1; TEST_TARGET_NAME = Zapys; CODE_SIGN_STYLE = Automatic; }; };
+000000000000000000000051 = { isa = XCBuildConfiguration; name = Release; buildSettings = { SDKROOT = iphoneos; IPHONEOS_DEPLOYMENT_TARGET = 17.0; SWIFT_VERSION = 5.0; SWIFT_OPTIMIZATION_LEVEL = "-O"; CLANG_ENABLE_MODULES = YES; }; };
+000000000000000000000053 = { isa = XCBuildConfiguration; name = Release; buildSettings = { PRODUCT_BUNDLE_IDENTIFIER = ua.zapys.local; PRODUCT_NAME = "$(TARGET_NAME)"; INFOPLIST_FILE = App/Info.plist; ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; TARGETED_DEVICE_FAMILY = 1; CODE_SIGN_STYLE = Automatic; }; };
+000000000000000000000055 = { isa = XCBuildConfiguration; name = Release; buildSettings = { PRODUCT_BUNDLE_IDENTIFIER = ua.zapys.local.uitests; PRODUCT_NAME = "$(TARGET_NAME)"; GENERATE_INFOPLIST_FILE = YES; TARGETED_DEVICE_FAMILY = 1; TEST_TARGET_NAME = Zapys; CODE_SIGN_STYLE = Automatic; }; };
+000000000000000000000032 = { isa = XCConfigurationList; buildConfigurations = (000000000000000000000050,000000000000000000000051,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+000000000000000000000033 = { isa = XCConfigurationList; buildConfigurations = (000000000000000000000052,000000000000000000000053,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+000000000000000000000034 = { isa = XCConfigurationList; buildConfigurations = (000000000000000000000054,000000000000000000000055,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+000000000000000000000001 = { isa = PBXProject; attributes = { LastUpgradeCheck = 1600; TargetAttributes = { 000000000000000000000029 = {TestTargetID = 000000000000000000000028; }; }; }; buildConfigurationList = 000000000000000000000032; compatibilityVersion = "Xcode 14.0"; developmentRegion = uk; hasScannedForEncodings = 0; knownRegions = (uk,en,Base,); mainGroup = 00000000000000000000000D; packageReferences = (00000000000000000000001E,); productRefGroup = 00000000000000000000000C; projectDirPath = ""; projectRoot = ""; targets = (000000000000000000000028,000000000000000000000029,); };
+}; rootObject = 000000000000000000000001; }
+
+
