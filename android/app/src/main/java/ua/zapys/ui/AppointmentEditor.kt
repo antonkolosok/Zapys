@@ -19,7 +19,7 @@ object AppointmentEditor {
  fun form(a: MainActivity,d: AppointmentDraft,existing: Boolean,clients: List<Client>,catalogue: List<Service>): View {
   val session=AppointmentSaveSession(d,clients,a.inlineClientId,a.inlineClientName,a.inlineClientPhone); val availableClients=session.clients; val serviceFields=mutableListOf<Pair<EditText,EditText>>()
   val t=a.palette; val p=a.form(if(existing) "Запис" else "Новий запис","calendar")
-  fun raw(label:String,value:String,set:(String)->Unit): EditText = a.field(p,label,value).apply { onChange { set(text.toString()) } }
+  fun raw(label:String,value:String,parent:LinearLayout=p,set:(String)->Unit): EditText = a.field(parent,label,value).apply { onChange { set(text.toString()) } }
   val date=raw("Дата * (РРРР-ММ-ДД)",d.date) { d.date=it }
   p.addView(t.button("Обрати дату") { val day=runCatching { LocalDate.parse(d.date) }.getOrDefault(LocalDate.now()); DatePickerDialog(a,{ _,y,m,v->date.setText(LocalDate.of(y,m+1,v).toString()) },day.year,day.monthValue-1,day.dayOfMonth).show() })
   val start=raw("Початок * (ГГ:ХХ)",d.start) { d.start=it }
@@ -31,9 +31,13 @@ object AppointmentEditor {
   p.addView(t.button("За тривалістю послуг") { d.manualEnd=false; showSuggestion(); a.changed() })
   p.addView(t.text("Клієнт * (для чернетки необов’язково)"))
   val client=Spinner(a); client.adapter=ArrayAdapter(a,android.R.layout.simple_spinner_dropdown_item,listOf("Без клієнта")+availableClients.map { "${it.displayName} · ${it.phone}" }); client.setSelection(availableClients.indexOfFirst { it.id==d.clientId }+1); p.addView(client)
-  client.onItemSelectedListener=object:AdapterView.OnItemSelectedListener { override fun onNothingSelected(p:AdapterView<*>?) {} ; override fun onItemSelected(p:AdapterView<*>?,v:View?,position:Int,id:Long) { val next=availableClients.getOrNull(position-1)?.id; if(next!=d.clientId) { d.clientId=next; a.changed() } } }
-    val inlineName=raw("Новий клієнт: ім’я (необов’язково)",a.inlineClientName) { a.inlineClientName=it; session.inlineName=it }
-  val inlinePhone=raw("Новий клієнт: телефон",a.inlineClientPhone) { a.inlineClientPhone=it; session.inlinePhone=it }
+  val inlineFields=LinearLayout(a).apply { orientation=LinearLayout.VERTICAL }; p.addView(inlineFields)
+  val inlineName=raw("Новий клієнт: ім’я (необов’язково)",a.inlineClientName,inlineFields) { a.inlineClientName=it; session.inlineName=it }
+  inlineFields.addView(t.text("Ім’я нового клієнта: до ${Limits.MAX_PERSON_NAME} символів без пробілів по краях",12f))
+  val inlinePhone=raw("Новий клієнт: телефон",a.inlineClientPhone,inlineFields) { a.inlineClientPhone=it; session.inlinePhone=it }.apply { inputType=android.text.InputType.TYPE_CLASS_PHONE }
+  fun showInlineFields() { inlineFields.visibility=if(d.clientId==null) View.VISIBLE else View.GONE }
+  showInlineFields()
+  client.onItemSelectedListener=object:AdapterView.OnItemSelectedListener { override fun onNothingSelected(p:AdapterView<*>?) {} ; override fun onItemSelected(p:AdapterView<*>?,v:View?,position:Int,id:Long) { val next=availableClients.getOrNull(position-1)?.id; if(next!=d.clientId) { d.clientId=next; a.changed() }; showInlineFields() } }
   val rows=t.column(); p.addView(rows); val error=a.errorLabel(p)
   val totalLabel=t.text(""); p.addView(totalLabel)
   fun updateTotal() { val total=d.services.fold(java.math.BigInteger.ZERO) { sum,s->sum.add(java.math.BigInteger.valueOf(s.priceMinor ?: 0)) }; totalLabel.text="Сума: ${java.math.BigDecimal(total,2).toPlainString()} грн"+if(d.services.any { it.priceMinor==null }) " + невідома ціна" else "" }
@@ -57,8 +61,12 @@ object AppointmentEditor {
   add.setOnClickListener { if(catalogue.isEmpty()) { error.text="Спершу додайте послугу в каталозі" } else AlertDialog.Builder(a).setTitle("Обрати послугу").setItems(catalogue.map { it.name }.toTypedArray()) { _,i-> if(d.services.size<5) { d.add(catalogue[i].snapshot()); a.changed(); refresh(); showSuggestion() } }.show() }; refresh()
   val note=raw("Нотатка (до 2000 символів)",d.note) { d.note=it }
   val noteCount=t.text("${d.note.length} / 2000",12f); p.addView(noteCount); note.onChange { noteCount.text="${note.length()} / 2000" }
-  p.addView(t.text("Статус")); val statuses=AppointmentStatus.values(); val status=Spinner(a); status.adapter=ArrayAdapter(a,android.R.layout.simple_spinner_dropdown_item,listOf("Чернетка","Заплановано","Завершено","Скасовано","Не з’явився / не з’явилась")); status.setSelection(d.status.ordinal); p.addView(status)
-  status.onItemSelectedListener=object:AdapterView.OnItemSelectedListener { override fun onNothingSelected(p:AdapterView<*>?) {} ; override fun onItemSelected(p:AdapterView<*>?,v:View?,position:Int,id:Long) { if(d.status!=statuses[position]) { d.status=statuses[position]; a.changed() } } }
+  p.addView(t.text("Статус"))
+  val statuses=listOf(AppointmentStatus.PLANNED,AppointmentStatus.COMPLETED,AppointmentStatus.CANCELLED,AppointmentStatus.NO_SHOW)
+  // A stored draft displays the primary-save status without losing its actual draft identity.
+  var displayedStatus=if(d.status==AppointmentStatus.DRAFT) AppointmentStatus.PLANNED else d.status
+  val status=Spinner(a); status.adapter=ArrayAdapter(a,android.R.layout.simple_spinner_dropdown_item,listOf("Заплановано","Завершено","Скасовано","Не з’явився / не з’явилась")); status.setSelection(statuses.indexOf(displayedStatus)); p.addView(status)
+  status.onItemSelectedListener=object:AdapterView.OnItemSelectedListener { override fun onNothingSelected(p:AdapterView<*>?) {} ; override fun onItemSelected(p:AdapterView<*>?,v:View?,position:Int,id:Long) { val next=statuses[position]; if(displayedStatus!=next) { displayedStatus=next; d.status=next; a.changed() } } }
   p.addView(CheckBox(a).apply { text="Оплачено"; isChecked=d.paid; setOnCheckedChangeListener { _,yes->d.paid=yes; a.changed() } })
   val received=raw("Фактично отримано, грн (необов’язково)",d.received) { d.received=it }
   received.inputType=android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
@@ -70,11 +78,12 @@ object AppointmentEditor {
   }
   fun commit(value:Appointment,allow:Boolean=false) { a.save(error,{ it.saveAppointment(value,allow) },{ failure-> if(failure is ConflictException) a.confirm("Час перетинається з іншим записом",failure.appointments.joinToString("\n") { "${it.clientName} ${Rules.time(it.startMinute)}–${Rules.time(it.endMinute)}" }) { commit(value,true) } }) { a.finish("calendar") } }
   fun submit(requestedStatus:AppointmentStatus) {
+   inlineName.error=null; inlinePhone.error=null
    val request=try { a.applyOverrides(d); session.prepare(requestedStatus) } catch(e:ValidationException) {
-    if(session.inlineName.isNotBlank() || session.inlinePhone.isNotBlank()) {
-     val c=Client(id=session.inlineId,firstName=session.inlineName.trim(),phone=session.inlinePhone.trim())
-     if(c.firstName.isBlank()) { inlineName.error=e.message; inlineName.requestFocus(); return }
-     if(c.phone.isBlank() || c.phone.none(Char::isDigit)) { inlinePhone.error=e.message; inlinePhone.requestFocus(); return }
+    if(d.clientId==null && (session.inlineName.isNotBlank() || session.inlinePhone.isNotBlank())) {
+     val c=Client(id=session.inlineId,firstName=session.inlineName.trim(),phone=session.inlinePhone)
+     PersonNameRules.firstNameError(session.inlineName)?.let { inlineName.error=it; inlineName.requestFocus(); return }
+     if(PhoneRules.normalize(c.phone)==null) { inlinePhone.error=PhoneRules.INVALID_MESSAGE; inlinePhone.requestFocus(); return }
     }
     invalid(e); return
    }
@@ -85,10 +94,11 @@ object AppointmentEditor {
     inlineName.setText(""); inlinePhone.setText("")
     client.adapter=ArrayAdapter(a,android.R.layout.simple_spinner_dropdown_item,listOf("Без клієнта")+availableClients.map { "${it.displayName} · ${it.phone}" })
     client.setSelection(availableClients.indexOfFirst { it.id==created.id }+1)
+    showInlineFields()
     commit(request.appointment)
    }
   }
-  p.addView(t.button("Зберегти запис") { submit(if(d.status==AppointmentStatus.DRAFT) AppointmentStatus.PLANNED else d.status) })
+  p.addView(t.button("Зберегти запис") { submit(displayedStatus) })
   a.saveAppointmentDraft={ submit(AppointmentStatus.DRAFT) }
   p.addView(t.button("Зберегти чернетку") { submit(AppointmentStatus.DRAFT) })
   if(existing) {

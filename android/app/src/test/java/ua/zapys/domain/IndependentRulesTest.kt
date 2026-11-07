@@ -36,7 +36,7 @@ class IndependentRulesTest {
 
     @Test fun noteAndTemplateLimitsAcceptExactlyTwoThousandCharacters() {
         val limit = "а".repeat(2000)
-        val client = Client(firstName = "Олена", phone = "123", note = limit,
+        val client = Client(firstName = "Олена", phone = "0671234567", note = limit,
             reminder = ReminderPreferences(template = limit))
         Rules.validateClient(client)
         Rules.validateService(Service(name = "Послуга", note = limit))

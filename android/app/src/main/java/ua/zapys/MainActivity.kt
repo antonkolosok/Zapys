@@ -47,7 +47,7 @@ class MainActivity : Activity() {
  private var appointmentDraft: AppointmentDraft?=null
  private var overrides=Bundle(); var inlineClientName=""; var inlineClientPhone=""; var inlineClientId=newId()
  private var selectedDate=java.time.LocalDate.now().toString()
- private var calendarMode="day"
+ private var calendarMode="week"
  private var contactOwner: String?=null
  private var pendingContact: Pair<String,String>?=null
  private var pendingContactUri: String?=null
@@ -180,10 +180,7 @@ class MainActivity : Activity() {
   contactFields=null; contactFormReady=false
   val root=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL; setBackgroundColor(palette.background) }
   body=FrameLayout(this); root.addView(body,LinearLayout.LayoutParams(-1,0,1f))
-  val nav=LinearLayout(this)
-  listOf("calendar" to "Календар", "clients" to "Клієнти", "services" to "Послуги", "settings" to "Налаштування").forEach { (key,label)->
-   nav.addView(palette.button(label) { navigate(key) }.apply { isSelected=route==key || (key=="clients" && route=="clientForm") || (key=="services" && route=="serviceForm"); contentDescription=label+if(isSelected) ", обрано" else "" },LinearLayout.LayoutParams(0,-2,1f))
-  }
+  val nav=BottomNavigation.create(this,palette,route) { navigate(it) }
   root.addView(nav)
   root.setOnApplyWindowInsetsListener { view, insets -> view.setPadding(insets.systemWindowInsetLeft,insets.systemWindowInsetTop,insets.systemWindowInsetRight,insets.systemWindowInsetBottom); insets }
   setContentView(root); root.requestApplyInsets()

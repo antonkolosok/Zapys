@@ -1,5 +1,96 @@
 # Zapys — поточний стан
 
+## 2026-11-07 — all ten tasks and full Android regression complete
+
+- Tasks 1–10 have separate tested/reviewed commits through `a5563b4`. The final test-fixture correction preserves the original lifecycle assertions and adds no production workaround.
+- Full unfiltered Android regression: exit 0, BUILD SUCCESSFUL in 3m46s; 104 device tests, zero failures/errors/skips (183.506s). Current unit XML: 111 tests, zero failures/errors. Lint: zero errors/16 baseline warnings. Both APKs built. Dedicated synthetic API35 emulator only; no real contact import/message sending. iOS unchanged and unrun locally.
+- Whole-branch production review and independent scoped final-fix review approved specification, code quality and validation; no open Critical/Important findings. See `docs/reviews/android-ux-2026-11-07.md`. Remaining nonblocking UI limitation: date context/selector in the bounded scrollable controls may require scrolling, including ordinary portrait.
+- Final fixture/evidence commit: `9457f84`. Feature branch pushed; single aggregate [PR #2](https://github.com/antonkolosok/Zapys/pull/2) created against `main`. No merge, auto-merge or mobile release performed. Local Android results are passing; remote CI is separate and no passing CI result is claimed here.
+
+## 2026-11-07 — final regression correction in progress
+
+- All ten numbered tasks have separate tested, independently reviewed commits through `a5563b4`. Whole-branch review approved production specification and quality, but final publication is blocked by a test-fixture crash.
+- Full Android regression exited 1 after 95 of 104 device tests: `ManualOpenLifecycleTest` constructs an unattached Activity and reflectively calls `onPause`; `super.onPause()` requires an Application and throws. Unit tests, lint and APK assembly completed before the device failure. This is not a passing full regression.
+- Failed log and connected results are preserved under `artifacts/android-ux-2026-11-06/final-first-failure*`. One scoped test-only fix is in progress; focused and full reruns plus independent re-review are required before the aggregate PR. No PR, merge or release.
+
+## 2026-11-07 — Task 10 Week default verified and reviewed
+
+- Fresh calendar now starts in Week with seven date columns. Intentional Day/date selection survives actual Activity recreation and return from editor/settings; existing saved-state paths unchanged, no preference store.
+- Common helper exit0,BUILD SUCCESSFUL1m23s;111unit0failures/errors,lint0errors16originalwarnings,bothAPKs. Device22PASS includes three default/restoration/navigation cases and header,gesture,resize,landscape viewport regression. Actual freshWeek screenshot inspected.
+- /root/task10_review: specification PASS, quality APPROVED, no blockers. Task10 complete in commita5563b4. Full regression and whole-branch review remain before the one aggregate PR; no merge or release.
+
+## 2026-11-07 — Task 9 movement verified and reviewed
+
+- Geometry, narrow snapshot-preserving transaction, long-press movement, edge scrolling, accessible move and confirmation flow implemented. Landscape controls/timeline fix included.
+- Current candidate common helper passes111unit tests,lint0errors/16originalwarnings,bothAPKs. Normal device suite37PASS; four normal screenshots inspected. Large-font6tests and explicitly verified landscape2tests PASS; eleven images inspected across normal/large/landscape batches. Independent /root/task9_review approved specification and quality; Task9 complete in commitfe7766a.
+- Earlier expected geometry/persistence/gesture/screen/viewport failures and corrected test-harness crash/compile issue are retained in the ledger; they are not passing evidence. Task9 complete in commitfe7766a;Task10in progress. No PR,merge or release.
+
+## 2026-11-07 — Task 8 Planned default verified and reviewed
+
+- Fresh appointment forms now start as Planned. Normal picker uses four explicit statuses; loaded drafts display Planned for primary save without mutating their in-memory/persisted draft identity during rendering.
+- Explicit/back draft save, calendar30-minute drafts, repeat resets and existing normal status round-trips remain covered. Failed validation plus real recreation retains raw fields and draft identity.
+- Common helper passed:107unit tests,lint0errors/16originalwarnings,bothAPKs. Device33PASS covers status choices/mapping/persistence, client selection, draft/repeat behavior, validation and existing calendar/header interactions.
+- /root/task8_review approved specification and quality, no blockers. Task8 complete in commit9b7874a;Task9 in progress,Task10pending. No PR,merge or release.
+
+## 2026-11-07 — Task 7 recipient and client-selection verified and reviewed
+
+- Client/reminder UI now explains manual recipient selection in the messenger. Legacy recipient properties and JSON remain exact; enabled reminders with blank recipients use the existing schedule/state/lifecycle gates.
+- An existing selected client takes precedence over inactive inline text. The whole inline form hides initially and after recreation; toggling back preserves raw input. Client persistence followed by an appointment conflict/retry reuses the same identity.
+- Common helper passed:106unit tests,lint0errors/16originalwarnings,bothAPKs. Device35PASS covers selection/recreation, real SQLite retry, legacy recipient preservation, manual intent payload and phone/name/contact/reminder regressions. No actual messenger launch or message send.
+- /root/task7_review approved specification for both7a/7b and code quality, no blockers. Task7 complete in commit31fd586;Task8 in progress,Tasks9–10pending. No PR,merge or release.
+
+## 2026-11-07 — Task 6 contact action verified and reviewed
+
+- Contact action now follows the heading/back area and precedes name/phone on both client create and edit forms. Existing binding, provider flow and field restoration IDs remain unchanged.
+- Common helper passed:101unit tests,lint0errors/16originalwarnings,bothAPKs. Device28PASS covers ordering, selective synthetic result/cancel/read failure, manual entry, actual recreation/ownership, phone/name validation and color-state regression. No real contacts accessed.
+- Twenty-four native renders cover light/dark,320/360/411dp,font1/2,create/edit. Four narrow light/dark normal/large images inspected; /root/task6_review approved specification and quality, no blockers. Task6 complete in commit94bd905;Task7 in progress,Tasks8–10pending. No PR,merge or release.
+
+## 2026-11-07 — Task 5 name limits verified and reviewed
+
+- Each personal-name field permits 50 Unicode code points after outer trim. Full and inline forms share domain validation and visible guidance, preserve overlong raw input, and focus the first invalid field. Valid combined display names may exceed 50.
+- Imported, pasted and legacy values are never truncated. Actual recreation preserves failed form input; corrected saves preserve raw phone formatting and existing appointment snapshots.
+- Common helper exit0: 101 unit tests PASS, lint0errors/16originalwarnings, both APKs. Affected device suite40PASS, including typing/paste, synthetic import, full/inline recreation, legacy persistence and color regression.
+- /root/task5_review: specification PASS, quality APPROVED, no blockers. Task5 complete in commit aee0b0c; Task6 in progress, Tasks7–10 pending. No PR, merge or release.
+
+## 2026-11-07 — Task 4 Ukrainian phone validation verified
+
+- Shared `PhoneRules.normalize` validates full Ukrainian mobile/fixed-line formats and provides canonical duplicate comparison. Full client, inline client and imported-contact saves reject invalid numbers with focused phone errors while preserving input. Accepted raw formatting, including edge spaces/NBSP, is stored unchanged.
+- Legacy invalid clients remain readable; appointments referencing them still save. Duplicate cancellation writes nothing; confirmation creates a distinct client UUID. No read-time normalization or data migration.
+- Common gate: 92 unit tests PASS, lint 0 errors/16 original warnings, both APKs. Affected device suite: 35 tests PASS, covering full/inline/import validation, duplicate interaction, client/appointment/reminder persistence and color regression. Intentional invalid legacy fixtures are retained.
+- `/root/task4_review`: specification APPROVED, quality APPROVED, no blockers. Task 4 complete in commit `d4ac5c5`; Task 5 in progress, Tasks 6–10 pending. No PR, merge or release.
+
+## 2026-11-07 — Task 3 visual color picker verified
+
+- Client/service colors now use a named swatch, four preset choices and a custom hue/saturation/value picker with live preview, clear, confirm and cancel. Existing ARGB is preserved until a deliberate new choice; new custom colors are opaque. The original `Theme.colors` caller interface is retained.
+- Committed value and pending dialog HSV/null/open state restore across real activity recreation. Initial rendering/restoration/cancel do not mark forms dirty; confirmation notifies once. Client/service save-reopen paths were exercised with synthetic data.
+- Common gate PASS: 84 unit tests, lint 0 errors/16 original warnings, both APKs. Device PASS: 10 picker/activity tests and 11 calendar regressions. All 13 final native/live images inspected, covering light/dark, enlarged text and arbitrary/black/white calendar colors.
+- Visual findings were reproduced and fixed before review: unchecked dark radio contrast was 1.13:1, and expanded large-text Cancel showed only 67/142px. Explicit themed indicators and a scrollable body with reserved action space now pass the unchanged contrast/visibility assertions.
+- `/root/task3_review`: specification APPROVED, quality APPROVED, no blocking findings. Task 3 complete in commit `14c2bdd`; Task 4 in progress, Tasks 5–10 pending. No PR, merge or mobile release.
+
+## 2026-11-07 — Task 2 bottom navigation verified
+
+- Navigation now uses one baseline-disabled adaptive row with common button bounds, full Ukrainian labels, selected styling and at least 48dp touch height. Changes are local to navigation; root system-inset handling is preserved.
+- Common gate: 84 unit tests PASS, lint 0 errors/16 original warnings, both APKs pass. Device checks: four navigation tests plus three additional real orientation/system-navigation inset checks PASS; Task 1 calendar regression 11 PASS. Measured widths 320/360/411dp and landscape widths, font scales 1/1.3/2; light/dark renders and all four attached configurations inspected.
+- `/root/task2_review` approved specification and code quality after matched baseline comparison. Exact pre-task `283782e` and current app have identical clipped Calendar New Appointment bounds in landscape; this is an existing calendar viewport defect, recorded as required Task 9/final-regression follow-up. It is not claimed fixed here.
+- Task 2 complete in commit `17ba516`. Tasks 3–10 pending; no aggregate PR or merge.
+
+## 2026-11-06 — execution preflight in local Codex
+
+- Read AGENTS.md and the approved ten-task handoff/spec/plan. Actual Superpowers skills are available and loaded; independent preflight reviewer `/root/preflight_review` checked all ten tasks and task pairs. Accepted rulings are recorded in the active progress ledger.
+- Created `feat/android-ux-improvements` from `384f290` using the supported Git approval flow. GitHub CLI `api user --jq .login` returned `antonkolosok`, exit 0. Preserve unrelated `android/.idea/`.
+- Common Android baseline PASS: approved `powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/build-android.ps1` exited 0; 84 unit tests across 13 suites, 0 failures/errors; lint, app APK and instrumentation APK assembly passed. Sandbox attempt failed dependency access; approved retry succeeded. Device/UI checks remain UNRUN while the dedicated emulator image installs; no attached devices were found. WHPX acceleration check returned usable (exit 0).
+- Preparation/rules commit: `e10f748`. Task 1 complete in commit `283782e`: the full-width date selector starts Monday at the content edge; separate week headings retain the 42dp grid gutter. Common checks: 84 unit tests PASS, lint 0 errors/16 existing warnings, both APKs built. Device checks: 6 header tests plus 5 calendar interaction tests PASS; 16 light/dark/large-text native renders inspected, maximum measured heading drift 0.232px. Reviewer `/root/task1_review` approved specification and code quality with no blocking findings.
+- Task 9 must preserve historical client snapshots through persistence; the existing editor save refreshes them. The accepted ruling adds a narrow move persistence path and a reopen regression test without changing editor save semantics.
+- Tasks 2–10 remain pending their individual gates. No PR, merge, auto-merge or release performed.
+
+## 2026-11-06 — новий пакет із 10 Android-поліпшень
+
+- Користувач затвердив нове правило для майбутньої роботи: кожен створений агент застосовує відповідні Superpowers skills; окрема задача → тести → незалежне рев'ю → окремий коміт. Один спільний PR лише після всіх задач; merge/auto-merge не виконувати. Правило записане в кореневому `AGENTS.md`.
+- Підготовлені специфікація `superpowers/specs/2026-11-06-android-ux-improvements.md`, покроковий план `superpowers/plans/2026-11-06-android-ux-improvements.md`, ledger `superpowers/progress/2026-11-06-android-ux-improvements.md` і стартове завдання `CODEX_HANDOFF.md` для нового локального Codex.
+- Два агенти з Superpowers виконали read-only аналіз календаря/навігації та форм/валідації. Виявлені важливі зв'язки: 42dp spacer відповідає gutter сітки; приховані inline-поля зараз можуть замінити вибраного клієнта; recipient перевіряється у domain/manual-reminder логіці; DRAFT не можна прибирати зі збереження разом із пунктом picker. План враховує ці зв'язки.
+- Свіжий локальний Git уже містить MVP-коміт `384f290` (`feat: add native local calendar MVP`), гілка `feat/local-mvp`; це новіше за попередні записи про untracked source. На момент початку підготовки сторонньою незбереженою зміною була `android/.idea/`; її не змінювали.
+- Усі десять продуктових задач поки **PENDING**: ця сесія готує передачу, оскільки не може виконати обов'язкові коміти через read-only `.git`. Код застосунку цим пакетом не змінений; нових тестових PASS, комітів, push або PR для пакета не заявлено. Виконання починається з preflight і task 1 у локальному Codex.
+
 ## 2026-11-06 — авторизація GitHub перевірена у двох середовищах
 
 - У звичайному PowerShell користувача `gh api user --jq .login` двічі повернула `antonkolosok`: авторизація CLI на комп'ютері працює. Повторний вхід не потрібний.
