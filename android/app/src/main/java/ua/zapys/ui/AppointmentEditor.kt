@@ -33,6 +33,7 @@ object AppointmentEditor {
   val client=Spinner(a); client.adapter=ArrayAdapter(a,android.R.layout.simple_spinner_dropdown_item,listOf("Без клієнта")+availableClients.map { "${it.displayName} · ${it.phone}" }); client.setSelection(availableClients.indexOfFirst { it.id==d.clientId }+1); p.addView(client)
   client.onItemSelectedListener=object:AdapterView.OnItemSelectedListener { override fun onNothingSelected(p:AdapterView<*>?) {} ; override fun onItemSelected(p:AdapterView<*>?,v:View?,position:Int,id:Long) { val next=availableClients.getOrNull(position-1)?.id; if(next!=d.clientId) { d.clientId=next; a.changed() } } }
     val inlineName=raw("Новий клієнт: ім’я (необов’язково)",a.inlineClientName) { a.inlineClientName=it; session.inlineName=it }
+  p.addView(t.text("Ім’я нового клієнта: до ${Limits.MAX_PERSON_NAME} символів без пробілів по краях",12f))
   val inlinePhone=raw("Новий клієнт: телефон",a.inlineClientPhone) { a.inlineClientPhone=it; session.inlinePhone=it }.apply { inputType=android.text.InputType.TYPE_CLASS_PHONE }
   val rows=t.column(); p.addView(rows); val error=a.errorLabel(p)
   val totalLabel=t.text(""); p.addView(totalLabel)
@@ -70,10 +71,11 @@ object AppointmentEditor {
   }
   fun commit(value:Appointment,allow:Boolean=false) { a.save(error,{ it.saveAppointment(value,allow) },{ failure-> if(failure is ConflictException) a.confirm("Час перетинається з іншим записом",failure.appointments.joinToString("\n") { "${it.clientName} ${Rules.time(it.startMinute)}–${Rules.time(it.endMinute)}" }) { commit(value,true) } }) { a.finish("calendar") } }
   fun submit(requestedStatus:AppointmentStatus) {
+   inlineName.error=null; inlinePhone.error=null
    val request=try { a.applyOverrides(d); session.prepare(requestedStatus) } catch(e:ValidationException) {
     if(session.inlineName.isNotBlank() || session.inlinePhone.isNotBlank()) {
      val c=Client(id=session.inlineId,firstName=session.inlineName.trim(),phone=session.inlinePhone)
-     if(c.firstName.isBlank()) { inlineName.error=e.message; inlineName.requestFocus(); return }
+     PersonNameRules.firstNameError(session.inlineName)?.let { inlineName.error=it; inlineName.requestFocus(); return }
      if(PhoneRules.normalize(c.phone)==null) { inlinePhone.error=PhoneRules.INVALID_MESSAGE; inlinePhone.requestFocus(); return }
     }
     invalid(e); return

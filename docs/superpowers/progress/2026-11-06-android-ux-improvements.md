@@ -18,8 +18,8 @@ Prepared 2026-11-06. Observed baseline HEAD `384f290`; no implementation of this
 | 1 | Monday/date-selector alignment | COMPLETE | 84 unit PASS; lint 0 errors/16 existing warnings; APKs PASS; 11 device PASS; measured + 16 render inspections | /root/task1_review: spec APPROVED, quality APPROVED | 283782e |
 | 2 | Settings/nav alignment | COMPLETE | 84 unit PASS; lint 0 errors/16 original warnings; APKs; 4 nav + 3 config + 11 regression PASS; renders inspected | /root/task2_review: spec APPROVED, quality APPROVED | 17ba516 |
 | 3 | Preset and custom-color palette | COMPLETE | 84 unit; lint 0 errors/16 original warnings; APKs; 10 color + 11 calendar PASS; 13 final images inspected | /root/task3_review: spec APPROVED, quality APPROVED | 14c2bdd |
-| 4 | Ukrainian phone validation | TESTED + REVIEWED; commit pending | 92 unit PASS; lint 0 errors/16 original warnings; APKs; 35 device PASS | /root/task4_review: spec APPROVED, quality APPROVED | pending |
-| 5 | Separate 50-character name limits | PENDING | — | — | — |
+| 4 | Ukrainian phone validation | COMPLETE | 92 unit PASS; lint 0 errors/16 original warnings; APKs; 35 device PASS | /root/task4_review: spec APPROVED, quality APPROVED | d4ac5c5 |
+| 5 | Separate 50-character name limits | VERIFIED; COMMIT PENDING | 101 unit PASS; lint 0 errors/16 original warnings; APKs; 40 device PASS | /root/task5_review: spec PASS, quality APPROVED | pending |
 | 6 | Contact picker at top | PENDING | — | — | — |
 | 7 | Recipient removal and selected-client precedence | PENDING | — | — | — |
 | 8 | Planned status by default | PENDING | — | — | — |
@@ -168,4 +168,13 @@ Apply the proposed rulings before dispatching Task 1; finding 1 must be carried 
 - Implementation, GREEN domain/device checks, independent review and commit pending.- Final common helper exit0, BUILD SUCCESSFUL25s,92tests/15suites/0failures/errors; lint0errors16originalwarnings; bothAPKs. Final affected device suite8classes35tests PASS,exit0,30.264s. Authoritative `task4-green-instrumentation.log`.
 - First device run35tests1failure was a test locator issue, not accepted as PASS. Diagnostic observed native uppercase СКАСУВАТИ/ПІДТВЕРДИТИ at android:id/button2/button1; test now selects nativeID+case-insensitive expected label while retaining actual clicks and all cancel/no-write/confirm/distinctUUID assertions. Intermediate logs preserved.
 - Two overbroad unit fixture replacements for existing selected clients100/200 were reverted before final unit gate to preserve invalid-legacy-selected-client coverage. Only fixtures reaching validated writes/new inline creation were migrated.
-- Independent reviewer /root/task4_review: specification APPROVED, code quality APPROVED, no blockers/material evidence gaps. Inspected unit XML, lint/APKs and authoritative device log without rerunning suites. Review `.superpowers/sdd/2026-11-06-android-ux-improvements/task-4-review.md`. Separate Task4 commit pending.
+- Independent reviewer /root/task4_review: specification APPROVED, code quality APPROVED, no blockers/material evidence gaps. Inspected unit XML, lint/APKs and authoritative device log without rerunning suites. Review `.superpowers/sdd/2026-11-06-android-ux-improvements/task-4-review.md`. Task4 commit: d4ac5c5 (`feat(android): validate Ukrainian client phone formats`).
+
+### Task 5 execution evidence
+
+- BASEd4ac5c5; implementer /root/task5_implementer loaded actual relevant Superpowers skills. Root owns builds/device commands.
+- Behavioral RED against existing Rules.validateClient: common helper exit1, BUILD FAILED31s,99tests5expected failures in PersonNameRulesTest (first/surname/patronymic51, supplementary code points, outer-trim boundaries). Optional fields/combined valid names passed. Product unchanged at RED. Saved XML `artifacts/android-ux-2026-11-06/task5-red-unit.xml`.
+- Implementation/shared Unicode limit helper, actual typing/paste/import/recreation/error focus/legacy tests, GREEN, independent review and separate commit pending.- Final coordinator common helper captured exit0, BUILD SUCCESSFUL15s (up-to-date rerun after final build response was lost at context compaction). Unit XML16suites101tests0failures/errors; lint0errors16originalwarnings; both APKs. No source/test edits during verification.
+- Exact affected9class device filter ClientFormValidationTest,ClientPhonePersistenceTest,ClientCrudTest,PersistenceTest,DevicePersistenceTest,DeviceClockPersistenceTest,AppointmentEditorPersistenceTest,ColorPickerActivityTest,ColorPickerViewTest:40PASS,exit0,58.059s. Authoritative artifacts/android-ux-2026-11-06/task5-green-instrumentation.log. Includes actual typing/paste/import/recreation/error focus, raw phone formatting and legacy snapshot preservation. Independent review pending.
+
+- Independent /root/task5_review: specification PASS, quality APPROVED, no Critical/Important findings or material evidence gaps. Existing16lint warnings recorded as Minor debt. Task5 separate commit pending.

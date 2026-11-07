@@ -1,11 +1,18 @@
 # Zapys — поточний стан
 
+## 2026-11-07 — Task 5 name limits verified and reviewed
+
+- Each personal-name field permits 50 Unicode code points after outer trim. Full and inline forms share domain validation and visible guidance, preserve overlong raw input, and focus the first invalid field. Valid combined display names may exceed 50.
+- Imported, pasted and legacy values are never truncated. Actual recreation preserves failed form input; corrected saves preserve raw phone formatting and existing appointment snapshots.
+- Common helper exit0: 101 unit tests PASS, lint0errors/16originalwarnings, both APKs. Affected device suite40PASS, including typing/paste, synthetic import, full/inline recreation, legacy persistence and color regression.
+- /root/task5_review: specification PASS, quality APPROVED, no blockers. Task5 ready for its separate commit; Tasks6–10 pending. No PR, merge or release.
+
 ## 2026-11-07 — Task 4 Ukrainian phone validation verified
 
 - Shared `PhoneRules.normalize` validates full Ukrainian mobile/fixed-line formats and provides canonical duplicate comparison. Full client, inline client and imported-contact saves reject invalid numbers with focused phone errors while preserving input. Accepted raw formatting, including edge spaces/NBSP, is stored unchanged.
 - Legacy invalid clients remain readable; appointments referencing them still save. Duplicate cancellation writes nothing; confirmation creates a distinct client UUID. No read-time normalization or data migration.
 - Common gate: 92 unit tests PASS, lint 0 errors/16 original warnings, both APKs. Affected device suite: 35 tests PASS, covering full/inline/import validation, duplicate interaction, client/appointment/reminder persistence and color regression. Intentional invalid legacy fixtures are retained.
-- `/root/task4_review`: specification APPROVED, quality APPROVED, no blockers. Separate Task 4 commit pending; Tasks 5–10 pending. No PR, merge or release.
+- `/root/task4_review`: specification APPROVED, quality APPROVED, no blockers. Task 4 complete in commit `d4ac5c5`; Task 5 in progress, Tasks 6–10 pending. No PR, merge or release.
 
 ## 2026-11-07 — Task 3 visual color picker verified
 

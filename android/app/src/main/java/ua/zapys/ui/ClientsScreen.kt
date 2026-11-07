@@ -17,9 +17,12 @@ object ClientsScreen {
  fun form(a: MainActivity, original: Client, existing: Boolean, all: List<Client>, appointments: List<Appointment>): View {
   val t=a.palette; val p=a.form(if(existing) "Клієнт" else "Новий клієнт","clients")
   val name=a.field(p,"Ім’я *",original.firstName)
+  p.addView(t.text("Ім’я: до ${Limits.MAX_PERSON_NAME} символів без пробілів по краях",12f))
   val phone=a.field(p,"Телефон *",original.phone,InputType.TYPE_CLASS_PHONE)
   val surname=a.field(p,"Прізвище (необов’язково)",original.surname)
+  p.addView(t.text("Прізвище: до ${Limits.MAX_PERSON_NAME} символів без пробілів по краях",12f))
   val patronymic=a.field(p,"По батькові (необов’язково)",original.patronymic)
+  p.addView(t.text("По батькові: до ${Limits.MAX_PERSON_NAME} символів без пробілів по краях",12f))
   val note=a.field(p,"Нотатка (текст, до ${Limits.MAX_NOTE} символів)",original.note,InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE)
   val count=t.text("${note.length()} / ${Limits.MAX_NOTE}",12f); p.addView(count); note.onChange { count.text="${note.length()} / ${Limits.MAX_NOTE}" }
   val color=t.colors(p,original.color) { a.changed() }; a.identify(p.getChildAt(p.childCount-1))
@@ -34,8 +37,12 @@ object ClientsScreen {
   val lead=a.field(p,"За скільки хвилин (1–525600 для нагадувань)",original.reminder.leadMinutes.toString(),InputType.TYPE_CLASS_NUMBER)
   val template=a.field(p,"Шаблон: [ім’я], [дата], [час], [послуги]",original.reminder.template,InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE)
   p.addView(t.button("Зберегти клієнта") {
-   listOf(name,phone,note).forEach { it.error=null }
-   val invalid = when { name.text.isBlank()->name to "Вкажіть ім’я"; PhoneRules.normalize(phone.text.toString())==null->phone to PhoneRules.INVALID_MESSAGE; note.length()>Limits.MAX_NOTE->note to "Максимум ${Limits.MAX_NOTE} символів"; else->null }
+   listOf(name,phone,surname,patronymic,note).forEach { it.error=null }
+   val invalid = PersonNameRules.firstNameError(name.text.toString())?.let { name to it }
+    ?: if(PhoneRules.normalize(phone.text.toString())==null) phone to PhoneRules.INVALID_MESSAGE
+    else PersonNameRules.surnameError(surname.text.toString())?.let { surname to it }
+     ?: PersonNameRules.patronymicError(patronymic.text.toString())?.let { patronymic to it }
+     ?: if(note.length()>Limits.MAX_NOTE) note to "Максимум ${Limits.MAX_NOTE} символів" else null
    if(invalid!=null) { invalid.first.error=invalid.second; invalid.first.requestFocus(); return@button }
    val minutes=lead.text.toString().toIntOrNull()
    if(minutes==null || minutes !in 0..525600 || enabled.isChecked && minutes==0) { lead.error="Для увімкненого нагадування вкажіть 1–525600 хвилин"; lead.requestFocus(); return@button }

@@ -1,5 +1,12 @@
 # Verification evidence — updated 2026-11-07
 
+## Task 5 final test evidence (2026-11-07)
+
+- Behavioral RED: existing Rules.validateClient accepted five over-limit cases; common helper exit1,99tests5failures. Saved task5-red-unit.xml contains7Task5tests5expectedfailures0errors; no product edits before RED.
+- Final common command: powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/build-android.ps1, exit0,BUILD SUCCESSFUL15s (captured repeat because prior completion response was lost). Actual XML16suites101tests0failures/errors; lint0errors16originalwarnings; app/testAPKs.
+- Dedicated synthetic API35 emulator-5580 runner with9affected classes:40PASS,exit0,58.059s. Authoritative artifacts/android-ux-2026-11-06/task5-green-instrumentation.log. New cases exercise actual51character typing/native clipboard paste,50/51 supplementary Unicode boundaries, focus ordering, synthetic imported names, actual full/inline Activity recreation, legacy overlong client reads/corrected save and preserved appointment snapshot. No real contacts or messages.
+- Independent /root/task5_review: specification PASS, quality APPROVED, no material evidence gaps. Commit tracked in active ledger.
+
 ## Task 4 final verification (2026-11-07)
 
 - Initial behavioral RED: common helper ran 89 tests with four expected failures for short phone writes/inline creation and canonical/invalid duplicate comparison; product unchanged. Saved `artifacts/android-ux-2026-11-06/task4-red-unit.xml`.
