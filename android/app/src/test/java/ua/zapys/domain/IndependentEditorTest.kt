@@ -14,15 +14,15 @@ class IndependentEditorTest {
         val form = AppointmentDraft.fresh(id = "stable", date = day, start = 600)
         assertEquals("", form.end)
         form.note = "unsaved note"; form.received = "bad money"
-        invalid { form.build(emptyList()) }
+        invalid { form.build(emptyList(), requestedStatus = AppointmentStatus.DRAFT) }
         assertEquals("stable", form.id); assertEquals("", form.end)
         assertEquals("unsaved note", form.note); assertEquals("bad money", form.received)
         form.end = "10:30"; form.received = ""
-        assertEquals("stable", form.build(emptyList()).id)
+        assertEquals("stable", form.build(emptyList(), requestedStatus = AppointmentStatus.DRAFT).id)
     }
     @Test fun draftAllowsNoClientButPlannedRequiresExistingClient() {
         val form = AppointmentDraft.fresh(date = day); form.end = "10:00"
-        assertNull(form.build(emptyList()).clientId)
+        assertNull(form.build(emptyList(), requestedStatus = AppointmentStatus.DRAFT).clientId)
         form.status = AppointmentStatus.PLANNED
         invalid { form.build(listOf(client)) }
         form.clientId = "deleted-client"; invalid { form.build(listOf(client)) }
@@ -35,10 +35,10 @@ class IndependentEditorTest {
         snapshots.forEach(form::add)
         invalid { form.add(Service(name = "Sixth").snapshot()) }
         assertEquals(snapshots, form.services)
-        assertEquals(snapshots, form.build(emptyList()).services)
+        assertEquals(snapshots, form.build(emptyList(), requestedStatus = AppointmentStatus.DRAFT).services)
         // Direct state restoration must also be validated at build, not just add.
         form.services.add(Service(name = "Sixth").snapshot())
-        invalid { form.build(emptyList()) }
+        invalid { form.build(emptyList(), requestedStatus = AppointmentStatus.DRAFT) }
     }
     @Test fun manualEndSurvivesDurationChangesAndUnknownDoesNotInventEnd() {
         val form = AppointmentDraft.fresh(date = day, start = 600)
@@ -47,11 +47,11 @@ class IndependentEditorTest {
         form.end = "11:17"; form.manualEnd = true
         form.services[0] = form.services[0].copy(durationMinutes = 90)
         form.add(Service(name = "Unknown").snapshot()); form.suggest()
-        val saved = form.build(emptyList())
+        val saved = form.build(emptyList(), requestedStatus = AppointmentStatus.DRAFT)
         assertEquals(677, saved.endMinute); assertTrue(saved.manualEnd)
         val unknown = AppointmentDraft.fresh(date = day, start = 600)
         unknown.add(Service(name = "Unknown").snapshot())
-        assertEquals("", unknown.end); invalid { unknown.build(emptyList()) }
+        assertEquals("", unknown.end); invalid { unknown.build(emptyList(), requestedStatus = AppointmentStatus.DRAFT) }
     }
     @Test fun visitOverridesPreserveOrderNullFreeAndDetachedCatalogueSnapshots() {
         val catalogue = Service(name = "Catalogue", durationMinutes = 30, priceMinor = 1234)
@@ -59,7 +59,7 @@ class IndependentEditorTest {
         form.end = "11:00"; form.manualEnd = true
         form.add(catalogue.snapshot().copy(durationMinutes = null, priceMinor = 0))
         form.add(Service(name = "Other", durationMinutes = 10).snapshot().copy(priceMinor = null))
-        val saved = form.build(emptyList())
+        val saved = form.build(emptyList(), requestedStatus = AppointmentStatus.DRAFT)
         assertNull(saved.services[0].durationMinutes); assertEquals(0L, saved.services[0].priceMinor)
         assertNull(saved.services[1].priceMinor)
         assertEquals(30, catalogue.durationMinutes); assertEquals(1234L, catalogue.priceMinor)
@@ -81,7 +81,7 @@ class IndependentEditorTest {
     }
     @Test fun endBoundaryRejectsOvernightAndAccepts2359() {
         val form = AppointmentDraft.fresh(date = day, start = 1380)
-        for (end in listOf("24:00", "00:30", "23:00")) { form.end = end; invalid { form.build(emptyList()) } }
-        form.end = "23:59"; assertEquals(1439, form.build(emptyList()).endMinute)
+        for (end in listOf("24:00", "00:30", "23:00")) { form.end = end; invalid { form.build(emptyList(), requestedStatus = AppointmentStatus.DRAFT) } }
+        form.end = "23:59"; assertEquals(1439, form.build(emptyList(), requestedStatus = AppointmentStatus.DRAFT).endMinute)
     }
 }

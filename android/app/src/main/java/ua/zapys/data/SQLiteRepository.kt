@@ -90,6 +90,25 @@ class SQLiteRepository(context: Context, databaseName: String = "zapys.db", priv
         replaceReminder(saved, client)
         saved
     }
+    /** Date/time-only operation: historical snapshots and legacy client data are not edited. */
+    override fun moveAppointment(original: Appointment, date: LocalDate, startMinute: Int, allowOverlap: Boolean): Appointment = transaction {
+        val all=appointments()
+        val stored=all.firstOrNull { it.id==original.id }
+        if(stored!=original) throw ValidationException("Запис змінився. Відкрийте календар знову")
+        val duration=stored.endMinute-stored.startMinute
+        if(stored.startMinute !in 0..1438 || stored.endMinute !in 1..1439 || duration<=0 || startMinute !in 0..(1439-duration)) throw ValidationException("Кінець має бути пізніше початку, до 23:59 цього дня")
+        // The preview already snapped/clamped the movement; persist its exact target once.
+        val saved=stored.copy(date=date,startMinute=startMinute,endMinute=startMinute+duration)
+        if(saved==stored) return@transaction stored
+        val conflicts=Rules.conflicts(saved,all)
+        if(!allowOverlap && conflicts.isNotEmpty()) throw ConflictException(conflicts)
+        reconcileTimeZone()
+        val payload=rows("appointments","id=?",arrayOf(stored.id)).single()
+        payload.put("date",saved.date.toString()); payload.put("start",saved.startMinute); payload.put("end",saved.endMinute)
+        put("appointments",saved.id,payload)
+        replaceReminder(saved,clients().firstOrNull { it.id==saved.clientId })
+        saved
+    }
     private fun replaceReminder(a: Appointment, c: Client?) {
         val existing = storedReminders().firstOrNull { it.appointmentId == a.id }
         val next = Rules.reminder(a, c, now(), zone ?: ZoneId.systemDefault())

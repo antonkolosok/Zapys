@@ -19,6 +19,15 @@ object CalendarGeometry {
   return Appointment(id,date,start,start+30)
  }
  fun resize(original:Appointment,minute:Float):Appointment=original.copy(endMinute=((minute/15f).roundToInt()*15).coerceIn(original.startMinute+1,1439),manualEnd=true)
+ fun move(original:Appointment,date:LocalDate,deltaMinutes:Float):Appointment {
+  require(deltaMinutes.isFinite()) { "Некоректне зміщення часу" }
+  require(original.startMinute in 0..1438 && original.endMinute in 1..1439 && original.endMinute>original.startMinute) { "Некоректна тривалість запису" }
+  val duration=original.endMinute-original.startMinute
+  // Clamp before integer conversion, so even finite Float.MAX_VALUE cannot overflow.
+  val steps=kotlin.math.round(deltaMinutes.toDouble()/15.0)
+  val start=(original.startMinute+steps*15.0).coerceIn(0.0,(1439-duration).toDouble()).toInt()
+  return original.copy(date=date,startMinute=start,endMinute=start+duration)
+ }
  fun gradient(colors:List<Int?>,rowCenters:List<Float>):List<CalendarStop> {
   require(colors.size==rowCenters.size)
   return colors.mapIndexedNotNull { i,c->c?.let { CalendarStop(it,rowCenters[i]) } }

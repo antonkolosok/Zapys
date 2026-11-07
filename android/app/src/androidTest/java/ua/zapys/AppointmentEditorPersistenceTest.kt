@@ -15,7 +15,7 @@ class AppointmentEditorPersistenceTest : AndroidTestCase() {
     override fun tearDown() { repo.close(); context.deleteDatabase(database); super.tearDown() }
     private fun open() = SQLiteRepository(context, database, { 0L }, ZoneId.of("UTC"))
     private fun reopen() { repo.close(); repo = open() }
-    private fun client(): Client = Client(firstName = "Fixture", phone = "100", reminder = ReminderPreferences(enabled = true, recipient = "fixture")).also { repo.saveClient(it) }
+    private fun client(): Client = Client(firstName = "Fixture", phone = "0671234567", reminder = ReminderPreferences(enabled = true, recipient = "fixture")).also { repo.saveClient(it) }
     private fun visit(c: Client, start: Int) = Appointment(date = date, startMinute = start, endMinute = start + 30, clientId = c.id, status = AppointmentStatus.PLANNED)
 
     fun testValidationFailureAndDeclinedConflictPreserveRecordAndOutboxAfterReopen() {
@@ -67,5 +67,23 @@ class AppointmentEditorPersistenceTest : AndroidTestCase() {
         assertEquals(source, repo.appointments().single { it.id == source.id })
         assertEquals(listOf(sourceReminder.copy(state = ReminderState.HANDED_OFF)), repo.reminders())
         assertEquals(repeated, repo.appointments().single { it.id == repeated.id })
+    }
+    fun testInlineClientPersistedBeforeConflictIsReusedAfterRecreationAndRetry() {
+        val existing=client()
+        val conflicting=repo.saveAppointment(visit(existing,600))
+        val draft=AppointmentDraft.from(visit(existing,610).copy(clientId=null,clientName=""))
+        val session=AppointmentSaveSession(draft,repo.clients(),"task7-inline","Inline synthetic","0670000712")
+        val request=session.prepare(AppointmentStatus.PLANNED)
+        repo.saveClient(request.newClient!!); session.clientPersisted(request.newClient!!)
+        try { repo.saveAppointment(request.appointment); fail("Overlap requires confirmation") } catch(_:ConflictException) {}
+        reopen()
+        assertEquals(listOf(conflicting),repo.appointments())
+        val restored=AppointmentSaveSession(draft,repo.clients(),session.inlineId,"hidden invalid","bad")
+        val retry=restored.prepare(AppointmentStatus.PLANNED)
+        assertNull(retry.newClient); assertEquals("task7-inline",retry.appointment.clientId)
+        repo.saveAppointment(retry.appointment,allowOverlap=true)
+        reopen()
+        assertEquals(2,repo.clients().size); assertEquals(1,repo.clients().count { it.id=="task7-inline" })
+        assertEquals("task7-inline",repo.appointments().single { it.id==draft.id }.clientId)
     }
 }

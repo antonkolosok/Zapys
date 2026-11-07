@@ -8,6 +8,7 @@ object Limits {
     const val MAX_CLIENTS = 1000
     const val MAX_APPOINTMENTS = 10000
     const val MAX_NOTE = 2000
+    const val MAX_PERSON_NAME = 50
     const val MAX_SERVICES = 5
     const val MAX_REMINDERS = 1
 }
@@ -37,6 +38,7 @@ interface Repository {
     fun saveService(service: Service)
     fun deleteService(id: String)
     fun saveAppointment(appointment: Appointment, allowOverlap: Boolean = false): Appointment
+    fun moveAppointment(original: Appointment, date: LocalDate, startMinute: Int, allowOverlap: Boolean = false): Appointment
     fun deleteAppointment(id: String)
     fun setReminderState(id: String, state: ReminderState)
     fun profile(): LocalProfile

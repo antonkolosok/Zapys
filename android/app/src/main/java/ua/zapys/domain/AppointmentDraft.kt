@@ -17,7 +17,7 @@ class AppointmentDraft(val id: String, var date: String, var start: String, var 
   Rules.validateAppointment(result,clients); return result
  }
  companion object {
-  fun fresh(id: String=newId(), date: LocalDate=LocalDate.now(), start: Int=540) = AppointmentDraft(id,date.toString(),Rules.time(start),"")
+  fun fresh(id: String=newId(), date: LocalDate=LocalDate.now(), start: Int=540) = AppointmentDraft(id,date.toString(),Rules.time(start),"",status=AppointmentStatus.PLANNED)
   fun from(a: Appointment) = AppointmentDraft(a.id,a.date.toString(),Rules.time(a.startMinute),Rules.time(a.endMinute),a.clientId,a.services.toMutableList(),a.note,a.status,a.paid,Rules.formatMoney(a.receivedMinor),a.manualEnd)
   fun repeat(a: Appointment) = from(a).let { AppointmentDraft(newId(),"","","",it.clientId,it.services.toMutableList(),it.note) }
  }

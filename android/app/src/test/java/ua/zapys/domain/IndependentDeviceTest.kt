@@ -42,7 +42,8 @@ class IndependentDeviceTest {
         listOf(ReminderState.SCHEDULED, ReminderState.HANDED_OFF, ReminderState.CANCELLED).forEach { state ->
             assertNull("state=$state", DeviceRules.actionable("current", listOf(row(state = state))))
         }
-        assertNull(DeviceRules.actionable("current", listOf(row(state = ReminderState.NEEDS_ACTION).copy(recipient = " \t"))))
+        val blank = row(state = ReminderState.NEEDS_ACTION).copy(recipient = " \t")
+        assertEquals(blank, DeviceRules.actionable("current", listOf(blank)))
     }
 
     @Test fun launchErrorCanRetryWhileHandoffAndCancellationAreTerminal() {

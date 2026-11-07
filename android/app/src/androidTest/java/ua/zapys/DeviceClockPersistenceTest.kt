@@ -10,7 +10,7 @@ class DeviceClockPersistenceTest:AndroidTestCase() {
  fun testTimezoneChangeAndUnchangedSavesKeepBothTerminalIdentities() {
   for(state in listOf(ReminderState.HANDED_OFF,ReminderState.CANCELLED)) {
    val db="clock-terminal-${state.name}.db"; context.deleteDatabase(db)
-   val client=Client(firstName="Synthetic",phone="123",reminder=ReminderPreferences(enabled=true,recipient="synthetic",leadMinutes=60))
+   val client=Client(firstName="Synthetic",phone="0671234567",reminder=ReminderPreferences(enabled=true,recipient="synthetic",leadMinutes=60))
    val appointment=Appointment(date=LocalDate.of(2030,1,2),startMinute=600,endMinute=630,clientId=client.id,status=AppointmentStatus.PLANNED)
    var old:Reminder?=null
    try {
@@ -30,7 +30,7 @@ class DeviceClockPersistenceTest:AndroidTestCase() {
   val db="clock-backwards.db"; context.deleteDatabase(db)
   var clock=0L
   try { SQLiteRepository(context,db,{ clock },ZoneId.of("UTC")).use { r ->
-   val client=Client(firstName="Synthetic",phone="123",reminder=ReminderPreferences(enabled=true,recipient="synthetic",leadMinutes=60))
+   val client=Client(firstName="Synthetic",phone="0671234567",reminder=ReminderPreferences(enabled=true,recipient="synthetic",leadMinutes=60))
    r.saveClient(client); r.saveAppointment(Appointment(date=LocalDate.of(2030,1,2),startMinute=600,endMinute=630,clientId=client.id,status=AppointmentStatus.PLANNED))
    val row=r.reminders().single(); clock=row.scheduledAt
    assertEquals(ReminderState.NEEDS_ACTION,r.reminders().single().state)

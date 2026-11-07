@@ -20,14 +20,14 @@ object RemindersScreen {
     ReminderState.ERROR->"Не вдалося відкрити повідомлення. Можна повторити."
     ReminderState.CANCELLED->"Нагадування скасовано"
    }
-   p.addView(t.text("${row.channel.title} · ${row.recipient}\n$label"))
+   p.addView(t.text("${row.channel.title}\n$label"))
    if(DeviceRules.actionableAt(row.id,rows,System.currentTimeMillis())!=null) {
     p.addView(t.button("Підготувати повідомлення") {
      a.loadForExternal({ DeviceRules.actionableAt(row.id,it.reminders(),System.currentTimeMillis()) }) preview@{ current ->
       if(current==null) { error.text="Нагадування вже не актуальне. Оновіть чергу."; return@preview }
-      AlertDialog.Builder(a).setTitle("${current.channel.title} · ${current.recipient}")
+      AlertDialog.Builder(a).setTitle(current.channel.title)
        .setNeutralButton("Копіювати текст") { _,_-> a.getSystemService(android.content.ClipboardManager::class.java).setPrimaryClip(android.content.ClipData.newPlainText("Zapys",current.text)) }
-       .setMessage("${current.text}\n\nОберіть застосунок і одержувача вручну. Системне меню не гарантує вибір зазначеного одержувача. Повернення або скасування в іншому застосунку не підтверджує надсилання.")
+       .setMessage("${current.text}\n\nОберіть одержувача вручну в месенджері. Повернення або скасування в іншому застосунку не підтверджує надсилання.")
        .setNegativeButton("Назад",null).setPositiveButton("Відкрити месенджер") { _,_->
         a.loadForExternal({ r -> DeviceRules.actionableAt(current.id,r.reminders(),System.currentTimeMillis()) to r.appointments().firstOrNull { it.id==current.appointmentId } }) open@{ (latest,appointment) ->
          val starts=appointment?.let { it.date.atStartOfDay().plusMinutes(it.startMinute.toLong()).atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli() } ?: 0

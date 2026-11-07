@@ -33,18 +33,10 @@ class Theme(val context: Context) {
  }
  fun scroll(content: View) = ScrollView(context).apply { isFillViewport = true; addView(content) }
  fun colors(parent: LinearLayout, initial: Int?, onChange: (Int?) -> Unit): () -> Int? {
-  val values = listOf(null, Color.rgb(121,173,133), Color.rgb(145,183,221), Color.rgb(227,178,115), Color.rgb(198,151,195))
-  var selected = initial
-  val options = if (initial != null && initial !in values) values + initial else values
   parent.addView(text("Колір"))
-  val picker = Spinner(context)
-  picker.adapter = ArrayAdapter(context, android.R.layout.simple_spinner_dropdown_item, options.map { when(it) { null -> "Без кольору"; else -> "#%06X".format(it and 0xFFFFFF) } })
-  picker.setSelection(options.indexOf(initial)); picker.minimumHeight = dp(48); picker.contentDescription="Колір, можна прибрати"
-  picker.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-   override fun onNothingSelected(p: AdapterView<*>?) {}
-   override fun onItemSelected(p: AdapterView<*>?, v: View?, position: Int, id: Long) { val next=options[position]; if(next != selected) { selected=next; onChange(next) } }
-  }
-  parent.addView(picker); return { selected }
+  val picker = ColorPickerView(context, initial, onChange)
+  parent.addView(picker, LinearLayout.LayoutParams(-1, -2))
+  return { picker.selectedColor }
  }
 }
 fun EditText.onChange(action: () -> Unit) { addTextChangedListener(object : TextWatcher {
