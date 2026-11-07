@@ -1,12 +1,19 @@
 # Zapys — поточний стан
 
+## 2026-11-07 — Task 4 Ukrainian phone validation verified
+
+- Shared `PhoneRules.normalize` validates full Ukrainian mobile/fixed-line formats and provides canonical duplicate comparison. Full client, inline client and imported-contact saves reject invalid numbers with focused phone errors while preserving input. Accepted raw formatting, including edge spaces/NBSP, is stored unchanged.
+- Legacy invalid clients remain readable; appointments referencing them still save. Duplicate cancellation writes nothing; confirmation creates a distinct client UUID. No read-time normalization or data migration.
+- Common gate: 92 unit tests PASS, lint 0 errors/16 original warnings, both APKs. Affected device suite: 35 tests PASS, covering full/inline/import validation, duplicate interaction, client/appointment/reminder persistence and color regression. Intentional invalid legacy fixtures are retained.
+- `/root/task4_review`: specification APPROVED, quality APPROVED, no blockers. Separate Task 4 commit pending; Tasks 5–10 pending. No PR, merge or release.
+
 ## 2026-11-07 — Task 3 visual color picker verified
 
 - Client/service colors now use a named swatch, four preset choices and a custom hue/saturation/value picker with live preview, clear, confirm and cancel. Existing ARGB is preserved until a deliberate new choice; new custom colors are opaque. The original `Theme.colors` caller interface is retained.
 - Committed value and pending dialog HSV/null/open state restore across real activity recreation. Initial rendering/restoration/cancel do not mark forms dirty; confirmation notifies once. Client/service save-reopen paths were exercised with synthetic data.
 - Common gate PASS: 84 unit tests, lint 0 errors/16 original warnings, both APKs. Device PASS: 10 picker/activity tests and 11 calendar regressions. All 13 final native/live images inspected, covering light/dark, enlarged text and arbitrary/black/white calendar colors.
 - Visual findings were reproduced and fixed before review: unchecked dark radio contrast was 1.13:1, and expanded large-text Cancel showed only 67/142px. Explicit themed indicators and a scrollable body with reserved action space now pass the unchanged contrast/visibility assertions.
-- `/root/task3_review`: specification APPROVED, quality APPROVED, no blocking findings. Separate Task 3 commit pending; Tasks 4–10 remain pending. No PR, merge or mobile release.
+- `/root/task3_review`: specification APPROVED, quality APPROVED, no blocking findings. Task 3 complete in commit `14c2bdd`; Task 4 in progress, Tasks 5–10 pending. No PR, merge or mobile release.
 
 ## 2026-11-07 — Task 2 bottom navigation verified
 

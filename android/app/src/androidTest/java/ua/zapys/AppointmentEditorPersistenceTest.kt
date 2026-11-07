@@ -15,7 +15,7 @@ class AppointmentEditorPersistenceTest : AndroidTestCase() {
     override fun tearDown() { repo.close(); context.deleteDatabase(database); super.tearDown() }
     private fun open() = SQLiteRepository(context, database, { 0L }, ZoneId.of("UTC"))
     private fun reopen() { repo.close(); repo = open() }
-    private fun client(): Client = Client(firstName = "Fixture", phone = "100", reminder = ReminderPreferences(enabled = true, recipient = "fixture")).also { repo.saveClient(it) }
+    private fun client(): Client = Client(firstName = "Fixture", phone = "0671234567", reminder = ReminderPreferences(enabled = true, recipient = "fixture")).also { repo.saveClient(it) }
     private fun visit(c: Client, start: Int) = Appointment(date = date, startMinute = start, endMinute = start + 30, clientId = c.id, status = AppointmentStatus.PLANNED)
 
     fun testValidationFailureAndDeclinedConflictPreserveRecordAndOutboxAfterReopen() {

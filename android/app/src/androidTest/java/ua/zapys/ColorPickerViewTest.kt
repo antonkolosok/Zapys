@@ -189,7 +189,7 @@ class ColorPickerActivityTest : ActivityInstrumentationTestCase2<MainActivity>(M
    for(client in listOf(true,false)) {
     val p = openForm(a, client); val label = "Task 3 fixture ${if(client) "client" else "service"}"
     onMain {
-     val fields=views(a.window.decorView).filterIsInstance<EditText>(); fields[0].setText(label); if(client) fields[1].setText("123456789")
+     val fields=views(a.window.decorView).filterIsInstance<EditText>(); fields[0].setText(label); if(client) fields[1].setText("0671234567")
      p.performClick(); val d=dialog(p); click(d,"Власний колір"); slider(d,"Відтінок").progress=120; slider(d,"Насиченість").progress=100; slider(d,"Яскравість").progress=100
     }
     press(p,true)

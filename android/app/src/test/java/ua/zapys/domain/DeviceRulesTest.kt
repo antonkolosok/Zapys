@@ -3,7 +3,7 @@ import org.junit.Test
 import org.junit.Assert.*
 class DeviceRulesTest {
  @Test fun enabledReminderRequiresAdvanceLead() {
-  val client=Client(firstName="A",phone="123",reminder=ReminderPreferences(enabled=true,recipient="123",leadMinutes=0))
+  val client=Client(firstName="A",phone="0671234567",reminder=ReminderPreferences(enabled=true,recipient="123",leadMinutes=0))
   try { Rules.validateClient(client); fail("Enabled zero lead must be rejected") } catch(_:ValidationException) {}
   Rules.validateClient(client.copy(reminder=client.reminder.copy(leadMinutes=1)))
  }

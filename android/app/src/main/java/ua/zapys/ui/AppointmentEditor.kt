@@ -33,7 +33,7 @@ object AppointmentEditor {
   val client=Spinner(a); client.adapter=ArrayAdapter(a,android.R.layout.simple_spinner_dropdown_item,listOf("Без клієнта")+availableClients.map { "${it.displayName} · ${it.phone}" }); client.setSelection(availableClients.indexOfFirst { it.id==d.clientId }+1); p.addView(client)
   client.onItemSelectedListener=object:AdapterView.OnItemSelectedListener { override fun onNothingSelected(p:AdapterView<*>?) {} ; override fun onItemSelected(p:AdapterView<*>?,v:View?,position:Int,id:Long) { val next=availableClients.getOrNull(position-1)?.id; if(next!=d.clientId) { d.clientId=next; a.changed() } } }
     val inlineName=raw("Новий клієнт: ім’я (необов’язково)",a.inlineClientName) { a.inlineClientName=it; session.inlineName=it }
-  val inlinePhone=raw("Новий клієнт: телефон",a.inlineClientPhone) { a.inlineClientPhone=it; session.inlinePhone=it }
+  val inlinePhone=raw("Новий клієнт: телефон",a.inlineClientPhone) { a.inlineClientPhone=it; session.inlinePhone=it }.apply { inputType=android.text.InputType.TYPE_CLASS_PHONE }
   val rows=t.column(); p.addView(rows); val error=a.errorLabel(p)
   val totalLabel=t.text(""); p.addView(totalLabel)
   fun updateTotal() { val total=d.services.fold(java.math.BigInteger.ZERO) { sum,s->sum.add(java.math.BigInteger.valueOf(s.priceMinor ?: 0)) }; totalLabel.text="Сума: ${java.math.BigDecimal(total,2).toPlainString()} грн"+if(d.services.any { it.priceMinor==null }) " + невідома ціна" else "" }
@@ -72,9 +72,9 @@ object AppointmentEditor {
   fun submit(requestedStatus:AppointmentStatus) {
    val request=try { a.applyOverrides(d); session.prepare(requestedStatus) } catch(e:ValidationException) {
     if(session.inlineName.isNotBlank() || session.inlinePhone.isNotBlank()) {
-     val c=Client(id=session.inlineId,firstName=session.inlineName.trim(),phone=session.inlinePhone.trim())
+     val c=Client(id=session.inlineId,firstName=session.inlineName.trim(),phone=session.inlinePhone)
      if(c.firstName.isBlank()) { inlineName.error=e.message; inlineName.requestFocus(); return }
-     if(c.phone.isBlank() || c.phone.none(Char::isDigit)) { inlinePhone.error=e.message; inlinePhone.requestFocus(); return }
+     if(PhoneRules.normalize(c.phone)==null) { inlinePhone.error=PhoneRules.INVALID_MESSAGE; inlinePhone.requestFocus(); return }
     }
     invalid(e); return
    }

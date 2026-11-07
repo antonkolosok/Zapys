@@ -9,7 +9,7 @@ object Rules {
     fun validateClient(c: Client) {
         requireValid(!c.reminder.enabled || c.reminder.leadMinutes>0,"Увімкнене нагадування потребує щонайменше 1 хвилини до запису")
         requireValid(c.firstName.isNotBlank(), "Вкажіть ім'я клієнта")
-        requireValid(c.phone.isNotBlank() && c.phone.any(Char::isDigit), "Вкажіть телефон клієнта")
+        requireValid(PhoneRules.normalize(c.phone) != null, PhoneRules.INVALID_MESSAGE)
         note(c.note)
         requireValid(c.reminder.leadMinutes in 0..525600, "Час нагадування: від 0 до 525600 хв")
         note(c.reminder.template)

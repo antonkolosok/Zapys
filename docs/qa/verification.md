@@ -1,5 +1,13 @@
 # Verification evidence — updated 2026-11-07
 
+## Task 4 final verification (2026-11-07)
+
+- Initial behavioral RED: common helper ran 89 tests with four expected failures for short phone writes/inline creation and canonical/invalid duplicate comparison; product unchanged. Saved `artifacts/android-ux-2026-11-06/task4-red-unit.xml`.
+- Final standard helper exited 0, `BUILD SUCCESSFUL in 25s`; final XML has 15 suites/92 tests/0 failures/errors. Lint 0 errors/16 original warnings; app/test APKs built. Two existing-selected-client fixtures with invalid legacy phones were restored before the final gate; valid-write fixtures alone were migrated.
+- Eight affected device classes ran 35 tests PASS in 30.264s, exit 0: ClientFormValidationTest (4), ClientPhonePersistenceTest (2), ClientCrudTest (2), PersistenceTest (9), DevicePersistenceTest (4), DeviceClockPersistenceTest (2), AppointmentEditorPersistenceTest (3), ColorPickerActivityTest (9). Log `artifacts/android-ux-2026-11-06/task4-green-instrumentation.log`.
+- Device checks exercised invalid full/inline/contact saves, focused errors and retained raw input, zero invalid writes, edge-space/NBSP formatting after save/reopen, canonical duplicate cancel/confirm with distinct UUIDs, and unchanged invalid legacy client data with usable appointments. Contact results are synthetic; no real address book or messages accessed.
+- An initial device failure was traced to native uppercase button accessibility labels. The test locator now uses native button ID plus expected case-insensitive text; all behavioral assertions remain. Diagnostic/first-run logs preserved. `/root/task4_review` independently inspected the evidence and approved both specification and code quality without rerunning suites.
+
 ## Task 3 final verification (2026-11-07)
 
 - Coordinator's exact common helper exited 0 (`BUILD SUCCESSFUL in 36s`), 84 unit tests with 0 failures/errors, lint 0 errors/16 original warnings, app and test APKs. Existing platform test API deprecations remain; no lint suppression or framework migration.

@@ -35,11 +35,11 @@ object ClientsScreen {
   val template=a.field(p,"Шаблон: [ім’я], [дата], [час], [послуги]",original.reminder.template,InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE)
   p.addView(t.button("Зберегти клієнта") {
    listOf(name,phone,note).forEach { it.error=null }
-   val invalid = when { name.text.isBlank()->name to "Вкажіть ім’я"; phone.text.isBlank() || phone.text.none(Char::isDigit)->phone to "Перевірте номер телефону"; note.length()>Limits.MAX_NOTE->note to "Максимум ${Limits.MAX_NOTE} символів"; else->null }
+   val invalid = when { name.text.isBlank()->name to "Вкажіть ім’я"; PhoneRules.normalize(phone.text.toString())==null->phone to PhoneRules.INVALID_MESSAGE; note.length()>Limits.MAX_NOTE->note to "Максимум ${Limits.MAX_NOTE} символів"; else->null }
    if(invalid!=null) { invalid.first.error=invalid.second; invalid.first.requestFocus(); return@button }
    val minutes=lead.text.toString().toIntOrNull()
    if(minutes==null || minutes !in 0..525600 || enabled.isChecked && minutes==0) { lead.error="Для увімкненого нагадування вкажіть 1–525600 хвилин"; lead.requestFocus(); return@button }
-   val client=original.copy(firstName=name.text.toString().trim(),phone=phone.text.toString().trim(),surname=surname.text.toString().trim(),patronymic=patronymic.text.toString().trim(),note=note.text.toString(),color=color(),reminder=ReminderPreferences(enabled.isChecked,Channel.values()[channel.selectedItemPosition],recipient.text.toString().trim(),minutes,template.text.toString()))
+   val client=original.copy(firstName=name.text.toString().trim(),phone=phone.text.toString(),surname=surname.text.toString().trim(),patronymic=patronymic.text.toString().trim(),note=note.text.toString(),color=color(),reminder=ReminderPreferences(enabled.isChecked,Channel.values()[channel.selectedItemPosition],recipient.text.toString().trim(),minutes,template.text.toString()))
    try { Rules.validateClient(client) } catch(e: ValidationException) { error.text=a.message(e); return@button }
    val commit = { a.save(error,{ r->r.saveClient(client) }) { a.finish("clients") } }
    // Duplicate phone never acts as an upsert key: this form retains its own UUID.

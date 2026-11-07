@@ -4,7 +4,10 @@ object FormRules {
  fun isHistory(appointment: Appointment, now: java.time.LocalDateTime): Boolean =
   !appointment.date.atStartOfDay().plusMinutes(appointment.endMinute.toLong()).isAfter(now)
  private fun digits(raw: String) = raw.filter(Char::isDigit)
- fun duplicates(client: Client, all: List<Client>): List<Client> = all.filter { it.id != client.id && digits(it.phone) == digits(client.phone) }
+ fun duplicates(client: Client, all: List<Client>): List<Client> {
+  val phone=PhoneRules.normalize(client.phone) ?: return emptyList()
+  return all.filter { it.id != client.id && PhoneRules.normalize(it.phone) == phone }
+ }
  fun duration(raw: String): Int? {
   if (raw.isBlank()) return null
   val value = raw.trim().toIntOrNull()

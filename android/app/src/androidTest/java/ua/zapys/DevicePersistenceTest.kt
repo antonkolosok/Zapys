@@ -19,7 +19,7 @@ class DevicePersistenceTest : AndroidTestCase() {
     override fun tearDown() { repo.close(); context.deleteDatabase(databaseName); super.tearDown() }
     private fun reopen() { repo.close(); repo = open() }
     private fun fixture(): Pair<Client, Appointment> {
-        val client = Client(firstName = "Synthetic", phone = "000123", reminder = ReminderPreferences(
+        val client = Client(firstName = "Synthetic", phone = "0671234567", reminder = ReminderPreferences(
             enabled = true, recipient = "synthetic-only", leadMinutes = 60, template = "Synthetic [час]"))
         repo.saveClient(client)
         val appointment = repo.saveAppointment(Appointment(date = date, startMinute = 600, endMinute = 630,
