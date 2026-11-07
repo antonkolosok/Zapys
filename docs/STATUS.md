@@ -4,9 +4,10 @@
 
 - Read AGENTS.md and the approved ten-task handoff/spec/plan. Actual Superpowers skills are available and loaded; independent preflight reviewer `/root/preflight_review` checked all ten tasks and task pairs. Accepted rulings are recorded in the active progress ledger.
 - Created `feat/android-ux-improvements` from `384f290` using the supported Git approval flow. GitHub CLI `api user --jq .login` returned `antonkolosok`, exit 0. Preserve unrelated `android/.idea/`.
-- Common Android baseline checks and emulator setup are in progress. Approved device discovery found no attached devices; installed SDK has Platform 35, Build Tools 35.0.0 and platform-tools, but no emulator/system image. No new test PASS or product-task completion is claimed.
+- Common Android baseline PASS: approved `powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/build-android.ps1` exited 0; 84 unit tests across 13 suites, 0 failures/errors; lint, app APK and instrumentation APK assembly passed. Sandbox attempt failed dependency access; approved retry succeeded. Device/UI checks remain UNRUN while the dedicated emulator image installs; no attached devices were found. WHPX acceleration check returned usable (exit 0).
+- Preparation/rules commit: `e10f748`. Task 1 is tested and independently approved, awaiting its separate commit: the full-width date selector starts Monday at the content edge; separate week headings retain the 42dp grid gutter. Common checks: 84 unit tests PASS, lint 0 errors/16 existing warnings, both APKs built. Device checks: 6 header tests plus 5 calendar interaction tests PASS; 16 light/dark/large-text native renders inspected, maximum measured heading drift 0.232px. Reviewer `/root/task1_review` approved specification and code quality with no blocking findings.
 - Task 9 must preserve historical client snapshots through persistence; the existing editor save refreshes them. The accepted ruling adds a narrow move persistence path and a reopen regression test without changing editor save semantics.
-- Product tasks remain pending their test/review/commit gates. No PR, merge, auto-merge or release performed.
+- Tasks 2–10 remain pending their individual gates. No PR, merge, auto-merge or release performed.
 
 ## 2026-11-06 — новий пакет із 10 Android-поліпшень
 

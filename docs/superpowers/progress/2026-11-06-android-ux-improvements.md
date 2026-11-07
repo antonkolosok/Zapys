@@ -8,14 +8,14 @@ Prepared 2026-11-06. Observed baseline HEAD `384f290`; no implementation of this
 ## Preflight
 
 - Superpowers in executing local Codex: VERIFIED; required skill directories exist and coordinator/reviewer loaded actual applicable files.
-- Feature branch: feat/android-ux-improvements created from 384f290 with approved Git escalation. Commit access still to be verified. GitHub CLI api user returned antonkolosok (exit 0).
-- Fresh baseline: common Gradle gate running. No connected device; SDK inspection confirms emulator/system image absent. Approved installation is running; no runtime PASS claimed.
-- Preparation/rules commit: PENDING.
+- Feature branch: feat/android-ux-improvements created from 384f290 with approved Git escalation. Commit access VERIFIED by e10f748. GitHub CLI api user returned antonkolosok (exit 0).
+- Fresh baseline: `powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/build-android.ps1` PASS, exit 0, 84 tests across 13 suites, 0 failures/errors; lint and app/test APK assembly passed. Initial sandbox run failed JUnit download with `Permission denied: getsockopt`; approved retry succeeded. No connected device; dedicated emulator image installation is running, device checks UNRUN.
+- Preparation/rules commit: e10f748 (`docs: record Android UX improvement plan and execution gates`).
 - Aggregate PR: NOT CREATED; only after all ten task gates.
 
 | Task | Deliverable | Status | Test evidence | Independent review | Commit |
 | --- | --- | --- | --- | --- | --- |
-| 1 | Monday/date-selector alignment | PENDING | — | — | — |
+| 1 | Monday/date-selector alignment | TESTED + REVIEWED; commit pending | 84 unit PASS; lint 0 errors/16 existing warnings; APKs PASS; 11 device PASS; measured + 16 render inspections | /root/task1_review: spec APPROVED, quality APPROVED | pending |
 | 2 | Settings/nav alignment | PENDING | — | — | — |
 | 3 | Preset and custom-color palette | PENDING | — | — | — |
 | 4 | Ukrainian phone validation | PENDING | — | — | — |
@@ -27,6 +27,18 @@ Prepared 2026-11-06. Observed baseline HEAD `384f290`; no implementation of this
 | 10 | Week mode by default | PENDING | — | — | — |
 
 For each task append commands, exit codes, executed test counts, device details, reviewer verdict and actual commit SHA. Record blockers explicitly. Do not mark a task complete based only on authored tests, code review, compilation or another agent's unsupported claim.
+
+### Task 1 execution evidence
+
+- BASE e10f748. Implementer `/root/task1_implementer` loaded actual TDD/debugging/verification skills; no worker-created agents.
+- Runtime RED command: `powershell.exe -NoProfile -ExecutionPolicy Bypass -File artifacts/android-ux-2026-11-06/device-checks.ps1 -Action Test -TestClass ua.zapys.CalendarHeaderLayoutTest -Label task1-red`. Exit 1; one expected assertion failure, 0 errors: 320dp day mode Monday.left expected 0, actual 110px. Product code unchanged at RED.
+- Dedicated synthetic AVD `Zapys_UX_API35`, API35, emulator-5580, density 420. Same runner with `-TestClass ua.zapys.CalendarViewInteractionTest -Label baseline-calendar-interactions`: exit 0, 5 tests PASS on unchanged baseline.
+- Common baseline command `powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/build-android.ps1`: exit 0; 84 unit tests, 0 failures/errors; lint 0 errors/16 warnings; both APKs pass. Worker test-compilation run also exit 0.
+- Corrected GREEN: common helper exit 0, 84 unit tests/0 failures/errors; lint 0 errors/16 existing warnings; app/test APKs pass. Exact class pair runner command with `-TestClass ua.zapys.CalendarHeaderLayoutTest,ua.zapys.CalendarViewInteractionTest -Label task1-green` exited 0, 11 tests PASS. Log `artifacts/android-ux-2026-11-06/task1-green-instrumentation.log`.
+- 24 native fixture PNGs and measurements pulled; 16 inspected directly (all light/dark week width/font combinations plus narrow day). Monday.left 0; seven cells within 1px equal width; Sunday fits. Maximum week heading-center drift 0.232px; original <=1px tolerance retained. Images are native View renders, not full-Activity screenshots.
+- Independent reviewer `/root/task1_review`: specification APPROVED, code quality APPROVED, no Critical/Important findings. Minor stale-status/log-path documentation findings corrected before commit. Full report `.superpowers/sdd/2026-11-06-android-ux-improvements/task-1-review.md`. Product commit pending.
+- First GREEN attempt (2026-11-07 local): common Android gate passed; emulator class pair ran 11 tests with 1 failure/0 errors. Week heading at 320dp column 2 center was 347.5px versus grid center 348.73215px, exceeding the existing 1px tolerance. Preserved log `artifacts/android-ux-2026-11-06/task1-first-green-failure-instrumentation.log`. Same implementer corrected accumulated integer rounding; assertion unchanged, final result above.
+- A worker emulator command was held at a permission prompt and ultimately aborted; it produced no runtime evidence. Coordinator now owns emulator commands. This was an execution delay, not a product test result.
 
 
 ## Execution preflight review and accepted rulings

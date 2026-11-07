@@ -17,10 +17,8 @@ object CalendarScreen {
   fun row(items:List<Pair<String,()->Unit>>) { root.addView(LinearLayout(a).apply { items.forEach { (label,action)->addView(t.button(label,action),LinearLayout.LayoutParams(0,-2,1f)) } }) }
   row(listOf("‹ Тиждень" to { change(CalendarGeometry.navigate(date,-1),mode) },"Сьогодні" to { change(LocalDate.now(),mode) },"Тиждень ›" to { change(CalendarGeometry.navigate(date,1),mode) }))
   row(listOf((if(mode=="day") "✓ День" else "День") to { change(date,"day") },(if(mode=="week") "✓ Тиждень" else "Тиждень") to { change(date,"week") }))
-  val header=LinearLayout(a)
-  header.addView(TextView(a),LinearLayout.LayoutParams(t.dp(42),1))
-  CalendarGeometry.weekDates(date).forEach { day-> header.addView(t.button(day.format(DateTimeFormatter.ofPattern("EE\nd",Locale.forLanguageTag("uk")))) { change(day,"day") }.apply { isSelected=day==date; if(day==date) { setBackgroundColor(t.accent); setTextColor(t.onAccent) } else if(day==LocalDate.now()) { background=android.graphics.drawable.GradientDrawable().apply { setColor(t.surface); setStroke(t.dp(2),t.accent) }; setTextColor(t.ink) }; contentDescription=day.toString()+(if(day==date) ", обрано" else "")+(if(day==LocalDate.now()) ", сьогодні" else ""); textSize=11f; setPadding(0,0,0,0) },LinearLayout.LayoutParams(0,-2,1f)) }
-  root.addView(header)
+  val header=CalendarDateHeader(a,t,date,mode) { change(it,"day") }
+  root.addView(header.selector)
   root.addView(t.text(if(mode=="day") date.format(DateTimeFormatter.ofPattern("EEEE, d MMMM",Locale.forLanguageTag("uk"))) else "Тиждень · ${CalendarGeometry.weekDates(date).first()} — ${CalendarGeometry.weekDates(date).last()}",14f))
   val error=a.errorLabel(root)
   val dates=if(mode=="week") CalendarGeometry.weekDates(date) else listOf(date)
@@ -53,6 +51,7 @@ object CalendarScreen {
     TimePickerDialog(a,{ _,hour,minute-> confirmResize(CalendarGeometry.resize(value,(hour*60+minute).toFloat())) },value.endMinute/60,value.endMinute%60,true).show()
    })
   }
+  header.gridHeadings?.let { root.addView(it) }
   val scroll=t.scroll(content); root.addView(scroll,LinearLayout.LayoutParams(-1,0,1f)); scroll.post { scroll.scrollTo(0,(CalendarGeometry.top(540)*a.resources.displayMetrics.density).toInt()) }
   // Native shortcut makes the agenda reachable without traversing 24 hours of canvas.
   root.addView(t.button("Список записів") { scroll.smoothScrollTo(0,grid.height) })
