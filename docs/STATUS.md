@@ -1,11 +1,18 @@
 # Zapys — поточний стан
 
+## 2026-11-07 — Task 8 Planned default verified and reviewed
+
+- Fresh appointment forms now start as Planned. Normal picker uses four explicit statuses; loaded drafts display Planned for primary save without mutating their in-memory/persisted draft identity during rendering.
+- Explicit/back draft save, calendar30-minute drafts, repeat resets and existing normal status round-trips remain covered. Failed validation plus real recreation retains raw fields and draft identity.
+- Common helper passed:107unit tests,lint0errors/16originalwarnings,bothAPKs. Device33PASS covers status choices/mapping/persistence, client selection, draft/repeat behavior, validation and existing calendar/header interactions.
+- /root/task8_review approved specification and quality, no blockers. Task8 separate commit pending,Tasks9–10pending. No PR,merge or release.
+
 ## 2026-11-07 — Task 7 recipient and client-selection verified and reviewed
 
 - Client/reminder UI now explains manual recipient selection in the messenger. Legacy recipient properties and JSON remain exact; enabled reminders with blank recipients use the existing schedule/state/lifecycle gates.
 - An existing selected client takes precedence over inactive inline text. The whole inline form hides initially and after recreation; toggling back preserves raw input. Client persistence followed by an appointment conflict/retry reuses the same identity.
 - Common helper passed:106unit tests,lint0errors/16originalwarnings,bothAPKs. Device35PASS covers selection/recreation, real SQLite retry, legacy recipient preservation, manual intent payload and phone/name/contact/reminder regressions. No actual messenger launch or message send.
-- /root/task7_review approved specification for both7a/7b and code quality, no blockers. Task7 separate commit pending,Tasks8–10pending. No PR,merge or release.
+- /root/task7_review approved specification for both7a/7b and code quality, no blockers. Task7 complete in commit31fd586;Task8 in progress,Tasks9–10pending. No PR,merge or release.
 
 ## 2026-11-07 — Task 6 contact action verified and reviewed
 

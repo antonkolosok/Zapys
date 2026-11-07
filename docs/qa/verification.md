@@ -1,5 +1,12 @@
 # Verification evidence — updated 2026-11-07
 
+## Task 8 final test evidence (2026-11-07)
+
+- Domain RED: common helper exit1,BUILD FAILED32s,107tests1expectedfailure; fresh status expectedPLANNED actualDRAFT. Saved task8-red-unit.xml. Device RED after assemble-only exit0/27s: one picker test,oneexpectedfailure,zeroerrors,2.174s; expected four normal choices,actual includes leading Draft. Log task8-picker-red-instrumentation.log. Product unchanged for both reproductions.
+- Final common helper exit0,BUILD SUCCESSFUL56s;107unit0failures/errors,16suites,lint0errors16originalwarnings,bothAPKs. Device AppointmentStatusPickerTest,AppointmentClientSelectionTest,AppointmentEditorPersistenceTest,ClientFormValidationTest,CalendarHeaderLayoutTest,CalendarViewInteractionTest:33PASS,53.335s,exit0. Authoritative artifacts/android-ux-2026-11-06/task8-green-instrumentation.log.
+- Seven status cases cover literal labels/every-index enum persistence, fresh client/end requirements, all normal statuses through recreation, loaded DRAFT identity through UI validation failure/actual recreation then deliberate promotion, explicit/back no-client drafts, calendar30-minute model draft, repeat/source preservation. Existing actual calendar tap suite runs separately. SQLite conflict/retry coverage is separate from the UI validation+recreation case; no joint UI database-failure/recreation claim.
+- Existing draft-specific unit fixtures now request DRAFT explicitly and retain original assertions. /root/task8_review approved specification and quality with no material gaps; separate commit tracked in active ledger.
+
 ## Task 7 final test evidence (2026-11-07)
 
 - RED common helper exit1,BUILD FAILED42s,106tests7expectedfailures: three selected-client/hidden-inline/retry failures and four blank-recipient validation/actionability failures. Saved XML artifacts/android-ux-2026-11-06/task7-red-unit/. Product unchanged; no UI RED claimed because testAPK assembly did not complete.

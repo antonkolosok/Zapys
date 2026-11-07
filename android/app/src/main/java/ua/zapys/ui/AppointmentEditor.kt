@@ -61,8 +61,12 @@ object AppointmentEditor {
   add.setOnClickListener { if(catalogue.isEmpty()) { error.text="Спершу додайте послугу в каталозі" } else AlertDialog.Builder(a).setTitle("Обрати послугу").setItems(catalogue.map { it.name }.toTypedArray()) { _,i-> if(d.services.size<5) { d.add(catalogue[i].snapshot()); a.changed(); refresh(); showSuggestion() } }.show() }; refresh()
   val note=raw("Нотатка (до 2000 символів)",d.note) { d.note=it }
   val noteCount=t.text("${d.note.length} / 2000",12f); p.addView(noteCount); note.onChange { noteCount.text="${note.length()} / 2000" }
-  p.addView(t.text("Статус")); val statuses=AppointmentStatus.values(); val status=Spinner(a); status.adapter=ArrayAdapter(a,android.R.layout.simple_spinner_dropdown_item,listOf("Чернетка","Заплановано","Завершено","Скасовано","Не з’явився / не з’явилась")); status.setSelection(d.status.ordinal); p.addView(status)
-  status.onItemSelectedListener=object:AdapterView.OnItemSelectedListener { override fun onNothingSelected(p:AdapterView<*>?) {} ; override fun onItemSelected(p:AdapterView<*>?,v:View?,position:Int,id:Long) { if(d.status!=statuses[position]) { d.status=statuses[position]; a.changed() } } }
+  p.addView(t.text("Статус"))
+  val statuses=listOf(AppointmentStatus.PLANNED,AppointmentStatus.COMPLETED,AppointmentStatus.CANCELLED,AppointmentStatus.NO_SHOW)
+  // A stored draft displays the primary-save status without losing its actual draft identity.
+  var displayedStatus=if(d.status==AppointmentStatus.DRAFT) AppointmentStatus.PLANNED else d.status
+  val status=Spinner(a); status.adapter=ArrayAdapter(a,android.R.layout.simple_spinner_dropdown_item,listOf("Заплановано","Завершено","Скасовано","Не з’явився / не з’явилась")); status.setSelection(statuses.indexOf(displayedStatus)); p.addView(status)
+  status.onItemSelectedListener=object:AdapterView.OnItemSelectedListener { override fun onNothingSelected(p:AdapterView<*>?) {} ; override fun onItemSelected(p:AdapterView<*>?,v:View?,position:Int,id:Long) { val next=statuses[position]; if(displayedStatus!=next) { displayedStatus=next; d.status=next; a.changed() } } }
   p.addView(CheckBox(a).apply { text="Оплачено"; isChecked=d.paid; setOnCheckedChangeListener { _,yes->d.paid=yes; a.changed() } })
   val received=raw("Фактично отримано, грн (необов’язково)",d.received) { d.received=it }
   received.inputType=android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
@@ -94,7 +98,7 @@ object AppointmentEditor {
     commit(request.appointment)
    }
   }
-  p.addView(t.button("Зберегти запис") { submit(if(d.status==AppointmentStatus.DRAFT) AppointmentStatus.PLANNED else d.status) })
+  p.addView(t.button("Зберегти запис") { submit(displayedStatus) })
   a.saveAppointmentDraft={ submit(AppointmentStatus.DRAFT) }
   p.addView(t.button("Зберегти чернетку") { submit(AppointmentStatus.DRAFT) })
   if(existing) {

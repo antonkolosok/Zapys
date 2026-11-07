@@ -21,8 +21,8 @@ Prepared 2026-11-06. Observed baseline HEAD `384f290`; no implementation of this
 | 4 | Ukrainian phone validation | COMPLETE | 92 unit PASS; lint 0 errors/16 original warnings; APKs; 35 device PASS | /root/task4_review: spec APPROVED, quality APPROVED | d4ac5c5 |
 | 5 | Separate 50-character name limits | COMPLETE | 101 unit PASS; lint 0 errors/16 original warnings; APKs; 40 device PASS | /root/task5_review: spec PASS, quality APPROVED | aee0b0c |
 | 6 | Contact picker at top | COMPLETE | 101 unit PASS; lint 0 errors/16 original warnings; APKs; 28 device PASS; four images inspected | /root/task6_review: spec APPROVED, quality APPROVED | 94bd905 |
-| 7 | Recipient removal and selected-client precedence | VERIFIED; COMMIT PENDING | 106 unit PASS; lint 0 errors/16 original warnings; APKs; 35 device PASS | /root/task7_review: 7a/7b spec APPROVED, quality APPROVED | pending |
-| 8 | Planned status by default | PENDING | — | — | — |
+| 7 | Recipient removal and selected-client precedence | COMPLETE | 106 unit PASS; lint 0 errors/16 original warnings; APKs; 35 device PASS | /root/task7_review: 7a/7b spec APPROVED, quality APPROVED | 31fd586 |
+| 8 | Planned status by default | VERIFIED; COMMIT PENDING | 107 unit PASS; lint 0 errors/16 original warnings; APKs; 33 device PASS | /root/task8_review: spec APPROVED, quality APPROVED | pending |
 | 9 | Calendar move/drag | PENDING | — | — | — |
 | 10 | Week mode by default | PENDING | — | — | — |
 
@@ -202,3 +202,15 @@ Apply the proposed rulings before dispatching Task 1; finding 1 must be carried 
 - Device checks cover whole inline-container visibility initial/recreated/toggled, retained raw drafts, selected-client saves, real SQLite conflict retry with same client ID, exact hidden legacy recipient, blank-recipient client save, and synthetic manual intent payload without recipient extras. No messenger launched or message sent. Independent review pending.
 
 - Independent /root/task7_review approved specification7a/7b and code quality; no Critical/Important findings or acceptance evidence gaps. Reviewed unchanged stale/lifecycle and persisted-ID paths plus current XML/device evidence. Separate Task7 commit pending.
+
+- Task7 complete in commit31fd586 (fix(android): simplify recipient and client selection forms); both7a/7b reviewed clean. Task8 BASE31fd586, acceptance/files/checks in approved scoped brief.
+
+### Task 8 execution evidence
+
+- BASE31fd586; implementer /root/task8_implementer loaded actual relevant Superpowers skills.
+- Domain RED standard common helper exit1,BUILD FAILED32s,107tests1expectedfailure: freshPrimarySaveIsPlannedAndRequiresClientAfterEndIsProvided expectedPLANNED actualDRAFT. Product unchanged. Saved artifacts/android-ux-2026-11-06/task8-red-unit.xml.
+- Device picker RED test authoring before production; GREEN,review,commit pending.
+- Second RED: assemble-only ignored helper assemble-test-apks.ps1 exit0,BUILD SUCCESSFUL27s. Actual device runner AppointmentStatusPickerTest#testNormalPickerContainsOnlyFourLiteralChoices,labeltask8-picker-red:exit1,1test1expectedfailure0errors,2.174s. Expected four normal literal choices; actual includes leading Чернетка. Product unchanged. Log artifacts/android-ux-2026-11-06/task8-picker-red-instrumentation.log. Implementation now unlocked.
+- Final common helper exit0,BUILD SUCCESSFUL56s;107unit/16suites/0failures/errors;lint0errors16originalwarnings,bothAPKs. Device AppointmentStatusPickerTest,AppointmentClientSelectionTest,AppointmentEditorPersistenceTest,ClientFormValidationTest,CalendarHeaderLayoutTest,CalendarViewInteractionTest:33PASS,exit0,53.335s. Log artifacts/android-ux-2026-11-06/task8-green-instrumentation.log. Independent review pending.
+
+- Independent /root/task8_review: specification compliant, code quality APPROVED, no Critical/Important findings or material gaps. Inspected actual REDs/currentXML/lint/device logs without reruns. Separate Task8 commit pending.

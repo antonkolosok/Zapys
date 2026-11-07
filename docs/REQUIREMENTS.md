@@ -36,6 +36,8 @@ Day timeline: time-positioned blocks; resize lower edge to alter end with 15-min
 
 Statuses: planned, completed, cancelled, no-show; drafts separate. Cancelling removes pending reminders. Repeat appointment copies client/services into new draft/form with a NEW id; user supplies new date/time; reset payment/status/reminder state. Paid/unpaid flag and optional actual received amount, nonnegative minor units. Notes and null/free price distinctions survive reopening.
 
+On Android, **+ Новий запис** opens an unsaved PLANNED form with a blank required end; primary save requires a client. The normal picker offers **Заплановано**, **Завершено**, **Скасовано**, **Не з’явився / не з’явилась**, without a placeholder or draft entry. A stored draft may display Planned for primary save, but rendering and failed saves must retain its actual DRAFT identity through recreation. Existing normal statuses round-trip unchanged until deliberately selected otherwise. Calendar creation still persists a 30-minute DRAFT; explicit/back draft saves remain available without a client; repeat retains its separate draft identity and reset semantics.
+
 ## Colours
 
 Client and each service have optional colour, unset by default. Appointment: client name at top followed by a vertical service list. Gradient anchors align with their labels: client colour then each coloured service in display order. Unset colours do not contribute stops. One colour => solid fill; no colours => standard appearance. Ensure readable text regardless of chosen colours.
