@@ -4,7 +4,8 @@
 
 - Tasks 1–10 have separate tested/reviewed commits through `a5563b4`. The final test-fixture correction preserves the original lifecycle assertions and adds no production workaround.
 - Full unfiltered Android regression: exit 0, BUILD SUCCESSFUL in 3m46s; 104 device tests, zero failures/errors/skips (183.506s). Current unit XML: 111 tests, zero failures/errors. Lint: zero errors/16 baseline warnings. Both APKs built. Dedicated synthetic API35 emulator only; no real contact import/message sending. iOS unchanged and unrun locally.
-- Whole-branch production review and independent scoped final-fix review approved specification, code quality and validation; no open Critical/Important findings. See `docs/reviews/android-ux-2026-11-07.md`. Remaining nonblocking UI limitation: date context/selector in the bounded scrollable controls may require scrolling, including ordinary portrait. Final evidence commit/publication pending; no merge or release authorized.
+- Whole-branch production review and independent scoped final-fix review approved specification, code quality and validation; no open Critical/Important findings. See `docs/reviews/android-ux-2026-11-07.md`. Remaining nonblocking UI limitation: date context/selector in the bounded scrollable controls may require scrolling, including ordinary portrait.
+- Final fixture/evidence commit: `9457f84`. Feature branch pushed; single aggregate [PR #2](https://github.com/antonkolosok/Zapys/pull/2) created against `main`. No merge, auto-merge or mobile release performed. Local Android results are passing; remote CI is separate and no passing CI result is claimed here.
 
 ## 2026-11-07 — final regression correction in progress
 
