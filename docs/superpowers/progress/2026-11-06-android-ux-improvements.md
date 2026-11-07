@@ -19,8 +19,8 @@ Prepared 2026-11-06. Observed baseline HEAD `384f290`; no implementation of this
 | 2 | Settings/nav alignment | COMPLETE | 84 unit PASS; lint 0 errors/16 original warnings; APKs; 4 nav + 3 config + 11 regression PASS; renders inspected | /root/task2_review: spec APPROVED, quality APPROVED | 17ba516 |
 | 3 | Preset and custom-color palette | COMPLETE | 84 unit; lint 0 errors/16 original warnings; APKs; 10 color + 11 calendar PASS; 13 final images inspected | /root/task3_review: spec APPROVED, quality APPROVED | 14c2bdd |
 | 4 | Ukrainian phone validation | COMPLETE | 92 unit PASS; lint 0 errors/16 original warnings; APKs; 35 device PASS | /root/task4_review: spec APPROVED, quality APPROVED | d4ac5c5 |
-| 5 | Separate 50-character name limits | VERIFIED; COMMIT PENDING | 101 unit PASS; lint 0 errors/16 original warnings; APKs; 40 device PASS | /root/task5_review: spec PASS, quality APPROVED | pending |
-| 6 | Contact picker at top | PENDING | — | — | — |
+| 5 | Separate 50-character name limits | COMPLETE | 101 unit PASS; lint 0 errors/16 original warnings; APKs; 40 device PASS | /root/task5_review: spec PASS, quality APPROVED | aee0b0c |
+| 6 | Contact picker at top | VERIFIED; COMMIT PENDING | 101 unit PASS; lint 0 errors/16 original warnings; APKs; 28 device PASS; four images inspected | /root/task6_review: spec APPROVED, quality APPROVED | pending |
 | 7 | Recipient removal and selected-client precedence | PENDING | — | — | — |
 | 8 | Planned status by default | PENDING | — | — | — |
 | 9 | Calendar move/drag | PENDING | — | — | — |
@@ -178,3 +178,15 @@ Apply the proposed rulings before dispatching Task 1; finding 1 must be carried 
 - Exact affected9class device filter ClientFormValidationTest,ClientPhonePersistenceTest,ClientCrudTest,PersistenceTest,DevicePersistenceTest,DeviceClockPersistenceTest,AppointmentEditorPersistenceTest,ColorPickerActivityTest,ColorPickerViewTest:40PASS,exit0,58.059s. Authoritative artifacts/android-ux-2026-11-06/task5-green-instrumentation.log. Includes actual typing/paste/import/recreation/error focus, raw phone formatting and legacy snapshot preservation. Independent review pending.
 
 - Independent /root/task5_review: specification PASS, quality APPROVED, no Critical/Important findings or material evidence gaps. Existing16lint warnings recorded as Minor debt. Task5 separate commit pending.
+
+- Task5 complete in commit aee0b0c (feat(android): enforce fifty-character personal name limits); independent review clean. Task6 BASEaee0b0c, acceptance/files/checks in approved Task6 brief.
+### Task 6 execution evidence
+
+- BASEaee0b0c; implementer /root/task6_implementer loaded actual relevant Superpowers skills. Root owns build/device commands; no real contact provider access.
+- Test-only common helper exit0, BUILD SUCCESSFUL39s. Actual RED runner ClientContactFormTest, label task6-red: exit1,2tests2failures0errors,3.441s. Both create/edit expected contact action directly after heading at child index2; actual19. Production unchanged at RED. Log artifacts/android-ux-2026-11-06/task6-red-instrumentation.log.
+- Scoped action relocation and synthetic selection/cancel/provider-read-failure/recreation ownership checks in progress. Final GREEN, independent review and commit pending.
+- Final common helper exit0, BUILD SUCCESSFUL56s;101unit tests/16suites/0failures/errors; lint0errors16originalwarnings; both APKs. Exact final device classes ClientContactFormTest,ClientFormValidationTest,ClientPhonePersistenceTest,ColorPickerActivityTest,ColorPickerViewTest with label task6-green:28PASS,exit0,59.729s. Log artifacts/android-ux-2026-11-06/task6-green-instrumentation.log.
+- Downloaded24synthetic native form images with runner -Action PullRendering -TaskNumber6 -Label task6-final to artifacts/android-ux-2026-11-06/task6-final-rendering. Visual inspection and independent review pending. Provider-unavailable test means selected-provider read failure; no OS launch-exception simulation is claimed.
+- Implementer directly inspected four narrow light/dark normal/large images named in task-6-report.md: full contact label, correct order, no clipping/overlap. Remaining renders generated/measured. Independent reviewer /root/task6_review dispatched.
+
+- Independent /root/task6_review: specification APPROVED, quality APPROVED, no blockers. Read actual logs and four named native images; fixture limitations and existing warnings recorded. Separate Task6 commit pending.

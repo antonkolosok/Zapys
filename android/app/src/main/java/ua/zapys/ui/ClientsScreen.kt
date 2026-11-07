@@ -16,6 +16,7 @@ object ClientsScreen {
  }
  fun form(a: MainActivity, original: Client, existing: Boolean, all: List<Client>, appointments: List<Appointment>): View {
   val t=a.palette; val p=a.form(if(existing) "Клієнт" else "Новий клієнт","clients")
+  p.addView(t.button("Обрати телефон з контактів") { a.pickContact() })
   val name=a.field(p,"Ім’я *",original.firstName)
   p.addView(t.text("Ім’я: до ${Limits.MAX_PERSON_NAME} символів без пробілів по краях",12f))
   val phone=a.field(p,"Телефон *",original.phone,InputType.TYPE_CLASS_PHONE)
@@ -28,7 +29,6 @@ object ClientsScreen {
   val color=t.colors(p,original.color) { a.changed() }; a.identify(p.getChildAt(p.childCount-1))
   val error=a.errorLabel(p)
   a.bindContactFields(name,phone)
-  p.addView(t.button("Обрати телефон з контактів") { a.pickContact() })
   p.addView(t.text("Нагадування: до 1 на запис. Надсилання вручну.",20f))
   val enabled=Switch(a).apply { text="Готувати нагадування"; isChecked=original.reminder.enabled; a.identify(this); setOnCheckedChangeListener { _,_->a.changed() } }; p.addView(enabled)
   val channel=Spinner(a).apply { adapter=ArrayAdapter(a,android.R.layout.simple_spinner_dropdown_item,Channel.values().map { it.title }); setSelection(original.reminder.channel.ordinal); a.identify(this) }; p.addView(channel)

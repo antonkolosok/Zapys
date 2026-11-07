@@ -1,11 +1,17 @@
 # Zapys — поточний стан
 
+## 2026-11-07 — Task 6 contact action verified and reviewed
+
+- Contact action now follows the heading/back area and precedes name/phone on both client create and edit forms. Existing binding, provider flow and field restoration IDs remain unchanged.
+- Common helper passed:101unit tests,lint0errors/16originalwarnings,bothAPKs. Device28PASS covers ordering, selective synthetic result/cancel/read failure, manual entry, actual recreation/ownership, phone/name validation and color-state regression. No real contacts accessed.
+- Twenty-four native renders cover light/dark,320/360/411dp,font1/2,create/edit. Four narrow light/dark normal/large images inspected; /root/task6_review approved specification and quality, no blockers. Task6 commit pending,Tasks7–10pending. No PR,merge or release.
+
 ## 2026-11-07 — Task 5 name limits verified and reviewed
 
 - Each personal-name field permits 50 Unicode code points after outer trim. Full and inline forms share domain validation and visible guidance, preserve overlong raw input, and focus the first invalid field. Valid combined display names may exceed 50.
 - Imported, pasted and legacy values are never truncated. Actual recreation preserves failed form input; corrected saves preserve raw phone formatting and existing appointment snapshots.
 - Common helper exit0: 101 unit tests PASS, lint0errors/16originalwarnings, both APKs. Affected device suite40PASS, including typing/paste, synthetic import, full/inline recreation, legacy persistence and color regression.
-- /root/task5_review: specification PASS, quality APPROVED, no blockers. Task5 ready for its separate commit; Tasks6–10 pending. No PR, merge or release.
+- /root/task5_review: specification PASS, quality APPROVED, no blockers. Task5 complete in commit aee0b0c; Task6 in progress, Tasks7–10 pending. No PR, merge or release.
 
 ## 2026-11-07 — Task 4 Ukrainian phone validation verified
 

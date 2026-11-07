@@ -1,5 +1,12 @@
 # Verification evidence — updated 2026-11-07
 
+## Task 6 test and visual evidence (2026-11-07)
+
+- RED actual create/edit ordering tests:2tests2expectedfailures0errors,contact child index19 instead of2; product unchanged. Common helper compiled tests successfully. Log artifacts/android-ux-2026-11-06/task6-red-instrumentation.log.
+- Final common helper exit0,BUILD SUCCESSFUL56s;101unit0failures/errors,lint0errors16originalwarnings,bothAPKs. Dedicated syntheticAPI35 runner classes ClientContactFormTest,ClientFormValidationTest,ClientPhonePersistenceTest,ColorPickerActivityTest,ColorPickerViewTest:28PASS,59.729s,exit0. Authoritative task6-green-instrumentation.log under the same artifacts directory.
+- Eight contact cases cover create/edit ordering, intercepted ACTION_PICK with synthetic result, cancellation, selected-provider read failure and manual save, actual recreation/pending ownership/raw metadata/stable IDs/open palette, stale draft owner,24light/dark width/font/create/edit renders. No actual contact provider launch/read; unavailable launch exception is preserved but not simulated.
+- Implementer inspected light320/font1/create,light320/font2/edit,dark320/font1/edit,dark320/font2/create in task6-final-rendering. Correct order and full contact label; large text wraps into two visible lines without overlap/clipping. Other renders generated and measured, not claimed directly inspected. /root/task6_review independently inspected the four images/logs and approved specification and quality; no blockers.
+
 ## Task 5 final test evidence (2026-11-07)
 
 - Behavioral RED: existing Rules.validateClient accepted five over-limit cases; common helper exit1,99tests5failures. Saved task5-red-unit.xml contains7Task5tests5expectedfailures0errors; no product edits before RED.
