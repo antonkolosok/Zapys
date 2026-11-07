@@ -1,5 +1,12 @@
 # Verification evidence — updated 2026-11-06
 
+## Task 2 final verification (2026-11-07)
+
+- Standard build helper exited 0: 84 unit tests, 0 failures/errors; lint 0 errors/16 original warnings; application and instrumentation APKs built. Intermediate subclass lint warning removed by a navigation factory; no suppression. Final artifact was rebuilt and all device configurations repeated after that correction.
+- `BottomNavigationLayoutTest`: 4 PASS in portrait/gesture. `testAttachedNavigationStaysInsideSystemInsets`: 1 PASS each in portrait/buttons, landscape/buttons, landscape/gesture. Existing calendar header/interaction classes: 11 PASS. Commands and logs are in the active ledger and `artifacts/android-ux-2026-11-06/task2-green-*-instrumentation.log`.
+- 36 native navigation fixture images generated across light/dark, widths 320/360/411/640/720/822dp and font scales 1/1.3/2; seven fixture images and all four actual orientation/navigation screenshots inspected. Text, common bounds, 48dp minimum, selected semantics and every callback have measured/interaction coverage. Actual window insets were 63/126px bottom or 126px right, with navigation wholly outside them.
+- Review's landscape Calendar clipping question resolved with exact BASE `283782e` APK built from an ignored source archive. Matched current/baseline cold launches (rotation1/font1/density420) have identical action and nav bounds in gesture and buttons configurations. Evidence `task2-{baseline,current}-landscape-{gesture,buttons}.{png,xml}` under the same artifacts directory. Existing calendar defect remains required Task 9/final-regression follow-up. `/root/task2_review`: spec APPROVED, quality APPROVED; no remaining Task 2 blockers.
+
 ## Current Android UX execution baseline (2026-11-06)
 
 This entry supersedes the earlier environment blockers below for this executing session.

@@ -15,8 +15,8 @@ Prepared 2026-11-06. Observed baseline HEAD `384f290`; no implementation of this
 
 | Task | Deliverable | Status | Test evidence | Independent review | Commit |
 | --- | --- | --- | --- | --- | --- |
-| 1 | Monday/date-selector alignment | TESTED + REVIEWED; commit pending | 84 unit PASS; lint 0 errors/16 existing warnings; APKs PASS; 11 device PASS; measured + 16 render inspections | /root/task1_review: spec APPROVED, quality APPROVED | pending |
-| 2 | Settings/nav alignment | PENDING | — | — | — |
+| 1 | Monday/date-selector alignment | COMPLETE | 84 unit PASS; lint 0 errors/16 existing warnings; APKs PASS; 11 device PASS; measured + 16 render inspections | /root/task1_review: spec APPROVED, quality APPROVED | 283782e |
+| 2 | Settings/nav alignment | TESTED + REVIEWED; commit pending | 84 unit PASS; lint 0 errors/16 original warnings; APKs; 4 nav + 3 config + 11 regression PASS; renders inspected | /root/task2_review: spec APPROVED, quality APPROVED | pending |
 | 3 | Preset and custom-color palette | PENDING | — | — | — |
 | 4 | Ukrainian phone validation | PENDING | — | — | — |
 | 5 | Separate 50-character name limits | PENDING | — | — | — |
@@ -36,7 +36,7 @@ For each task append commands, exit codes, executed test counts, device details,
 - Common baseline command `powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/build-android.ps1`: exit 0; 84 unit tests, 0 failures/errors; lint 0 errors/16 warnings; both APKs pass. Worker test-compilation run also exit 0.
 - Corrected GREEN: common helper exit 0, 84 unit tests/0 failures/errors; lint 0 errors/16 existing warnings; app/test APKs pass. Exact class pair runner command with `-TestClass ua.zapys.CalendarHeaderLayoutTest,ua.zapys.CalendarViewInteractionTest -Label task1-green` exited 0, 11 tests PASS. Log `artifacts/android-ux-2026-11-06/task1-green-instrumentation.log`.
 - 24 native fixture PNGs and measurements pulled; 16 inspected directly (all light/dark week width/font combinations plus narrow day). Monday.left 0; seven cells within 1px equal width; Sunday fits. Maximum week heading-center drift 0.232px; original <=1px tolerance retained. Images are native View renders, not full-Activity screenshots.
-- Independent reviewer `/root/task1_review`: specification APPROVED, code quality APPROVED, no Critical/Important findings. Minor stale-status/log-path documentation findings corrected before commit. Full report `.superpowers/sdd/2026-11-06-android-ux-improvements/task-1-review.md`. Product commit pending.
+- Independent reviewer `/root/task1_review`: specification APPROVED, code quality APPROVED, no Critical/Important findings. Minor stale-status/log-path documentation findings corrected before commit. Full report `.superpowers/sdd/2026-11-06-android-ux-improvements/task-1-review.md`. Product commit: 283782e (`fix(android): align calendar date selector and week headings`).
 - First GREEN attempt (2026-11-07 local): common Android gate passed; emulator class pair ran 11 tests with 1 failure/0 errors. Week heading at 320dp column 2 center was 347.5px versus grid center 348.73215px, exceeding the existing 1px tolerance. Preserved log `artifacts/android-ux-2026-11-06/task1-first-green-failure-instrumentation.log`. Same implementer corrected accumulated integer rounding; assertion unchanged, final result above.
 - A worker emulator command was held at a permission prompt and ultimately aborted; it produced no runtime evidence. Coordinator now owns emulator commands. This was an execution delay, not a product test result.
 
@@ -132,3 +132,21 @@ Every pair is included, including documentation-only sharing. All tasks also sha
 The prepared package preserves all ten numbered task boundaries, task 7's two parts, test/review/commit gates, synthetic data, feature branch, one final unmerged PR and no release. Each task records acceptance criteria/files/checks before implementation. Both spec and plan forbid claiming device PASS from compilation. Handoff truthfully identifies preparation rather than implementation. No mandatory always-failing or assertion-free tests, mandated verbatim logic duplication, destructive migration, or new dependency/framework migration was found in plan text.
 
 Apply the proposed rulings before dispatching Task 1; finding 1 must be carried explicitly into the Task 9 brief and affected files. Rulings 2–3 are operational requirements before the first task. This scan does not establish baseline device/build/Git availability; coordinator owns that evidence and stop gates.
+
+### Task 2 execution evidence
+
+- BASE 283782e; implementer /root/task2_implementer loaded actual applicable Superpowers skills. Acceptance/files/checks recorded in Task 2 plan and scoped brief before implementation.
+- RED: standard common helper compiled the failing test, exit 0. Dedicated API35 emulator runner with `-TestClass ua.zapys.BottomNavigationLayoutTest -Label task2-red` exited 1: one test, one expected failure, 0 errors. At 320dp Clients button top was 0px while the first item's was 12px. Log `artifacts/android-ux-2026-11-06/task2-red-instrumentation.log`. Production Task 2 code unchanged at reproduction.
+- Implementation, GREEN/configuration/render checks, independent review and separate commit pending.
+
+### Remote preflight refresh
+
+- GitHub connector confirmed repository default branch `main`, push access and existing MVP PR #1 already merged upstream before this batch. No PR exists yet for this Android UX batch. Read-only observation only; this session has not merged or published anything. Final aggregate PR gate remains all ten completed tasks.
+### Task 2 final verification and cross-task finding
+
+- Final factory build: common helper exit0, 84 unit tests/0 failures/errors, lint 0 errors/16 original warnings, both APKs. An intermediate custom subclass introduced a ViewConstructor warning; replacing it with the factory removed that warning without suppression. One intermediate compile error was corrected; neither intermediate build is final PASS evidence.
+- Final device runs: BottomNavigationLayoutTest full class 4 PASS in portrait/gesture; attached inset test 1 PASS in each portrait/buttons, landscape/buttons, landscape/gesture. Task1 calendar regression 11 PASS. Logs `artifacts/android-ux-2026-11-06/task2-green-*-instrumentation.log`; latest Task1 regression uses `task1-green-instrumentation.log`.
+- Native renders: 36 width/theme/font combinations plus four attached-screen configurations; 11 images inspected by implementer, including all four actual screenshots. Coordinates captured for real bottom/right system insets.
+- Reviewer found Important evidence gap: calendar New Appointment action clips in landscape, causality unknown. Built exact BASE283782e from git archive in ignored scratch storage (assembleDebug exit0), then captured matched cold launches at rotation1,font1,density420 with gesture and buttons. Baseline/current PNG/XML files: `artifacts/android-ux-2026-11-06/task2-{baseline,current}-landscape-{gesture,buttons}`. Bounds identical in both pairs: gesture action [31,876][1889,891], navigation [0,891][1920,1017]; buttons action [31,876][1763,954], navigation [0,954][1794,1080]. Clipping is demonstrated before Task2 and unchanged by Task2. One screenshot transfer transiently failed; successful retry produced all four images.
+- Ruling: carry this verified existing calendar viewport defect into Task9 calendar/ScrollView work and the final visual regression. The calendar New Appointment action and usable timeline must remain reachable in landscape and large text. Do not claim it fixed in Task2. Cost: scoped viewport work/tests in Task9, no extra numbered task or silent omission.
+- Independent `/root/task2_review` scoped re-review verified all matched evidence: specification APPROVED, code quality APPROVED, no remaining Task2 blockers. Original source review and scoped evidence review are in `.superpowers/sdd/2026-11-06-android-ux-improvements/task-2-review.md`. Separate Task2 commit pending.
