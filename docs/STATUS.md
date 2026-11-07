@@ -1,11 +1,19 @@
 # Zapys — поточний стан
 
+## 2026-11-07 — Task 3 visual color picker verified
+
+- Client/service colors now use a named swatch, four preset choices and a custom hue/saturation/value picker with live preview, clear, confirm and cancel. Existing ARGB is preserved until a deliberate new choice; new custom colors are opaque. The original `Theme.colors` caller interface is retained.
+- Committed value and pending dialog HSV/null/open state restore across real activity recreation. Initial rendering/restoration/cancel do not mark forms dirty; confirmation notifies once. Client/service save-reopen paths were exercised with synthetic data.
+- Common gate PASS: 84 unit tests, lint 0 errors/16 original warnings, both APKs. Device PASS: 10 picker/activity tests and 11 calendar regressions. All 13 final native/live images inspected, covering light/dark, enlarged text and arbitrary/black/white calendar colors.
+- Visual findings were reproduced and fixed before review: unchecked dark radio contrast was 1.13:1, and expanded large-text Cancel showed only 67/142px. Explicit themed indicators and a scrollable body with reserved action space now pass the unchanged contrast/visibility assertions.
+- `/root/task3_review`: specification APPROVED, quality APPROVED, no blocking findings. Separate Task 3 commit pending; Tasks 4–10 remain pending. No PR, merge or mobile release.
+
 ## 2026-11-07 — Task 2 bottom navigation verified
 
 - Navigation now uses one baseline-disabled adaptive row with common button bounds, full Ukrainian labels, selected styling and at least 48dp touch height. Changes are local to navigation; root system-inset handling is preserved.
 - Common gate: 84 unit tests PASS, lint 0 errors/16 original warnings, both APKs pass. Device checks: four navigation tests plus three additional real orientation/system-navigation inset checks PASS; Task 1 calendar regression 11 PASS. Measured widths 320/360/411dp and landscape widths, font scales 1/1.3/2; light/dark renders and all four attached configurations inspected.
 - `/root/task2_review` approved specification and code quality after matched baseline comparison. Exact pre-task `283782e` and current app have identical clipped Calendar New Appointment bounds in landscape; this is an existing calendar viewport defect, recorded as required Task 9/final-regression follow-up. It is not claimed fixed here.
-- Task 2 tested/reviewed, separate commit pending. Tasks 3–10 pending; no aggregate PR or merge.
+- Task 2 complete in commit `17ba516`. Tasks 3–10 pending; no aggregate PR or merge.
 
 ## 2026-11-06 — execution preflight in local Codex
 

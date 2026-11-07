@@ -1,4 +1,12 @@
-# Verification evidence — updated 2026-11-06
+# Verification evidence — updated 2026-11-07
+
+## Task 3 final verification (2026-11-07)
+
+- Coordinator's exact common helper exited 0 (`BUILD SUCCESSFUL in 36s`), 84 unit tests with 0 failures/errors, lint 0 errors/16 original warnings, app and test APKs. Existing platform test API deprecations remain; no lint suppression or framework migration.
+- Final `ColorPickerViewTest,ColorPickerActivityTest`: 10 tests PASS, exit 0; actual framework activity recreation covers pending open HSV/null/latent hue and confirmed form state. Tests exercise presets/custom touch and native accessible sliders, confirm/cancel/null, callback count, arbitrary stored ARGB, hierarchy state and client/service save-reopen. Final calendar header/interaction regression: 11 PASS.
+- Recorded REDs: original HEX spinner lacks named swatch; dark native unchecked ring contrast 1.12875 instead of at least 3; expanded custom dialog Cancel visible height 67px instead of 142px. The initially collapsed-content visibility test passed and was not misreported as RED. Matching expanded content reproduced the real defect; final unchanged visibility and contrast assertions pass.
+- Authoritative final logs: `artifacts/android-ux-2026-11-06/task3-green-instrumentation.log` and latest `task1-green-instrumentation.log`. Authoritative final renders: `task3-final-rendering/` under the same directory, 12 native light/dark normal/enlarged picker/gradient images plus `large-live-screen.png`. All 13 directly inspected by implementer and independently reviewed. Earlier `task3-first-rendering/` and nested `task3-rendering/task-3/` preserve failed/intermediate evidence, not final output.
+- `/root/task3_review` approved specification and code quality with no blocking findings. Full review and implementation report are in the plan's ignored SDD workspace; durable task status/commits are in the active progress ledger.
 
 ## Task 2 final verification (2026-11-07)
 
