@@ -1,5 +1,19 @@
 # Verification evidence — updated 2026-11-07
 
+## Final aggregate Android result (2026-11-07)
+
+- PASS: `powershell.exe -NoProfile -ExecutionPolicy Bypass -File artifacts/android-ux-2026-11-06/final-android-regression.ps1`, exit 0, BUILD SUCCESSFUL in 3m46s. It runs `testDebugUnitTest lintDebug assembleDebug assembleDebugAndroidTest connectedDebugAndroidTest`, with no class filter and `ANDROID_SERIAL=emulator-5580` after checking the synthetic AVD identity.
+- Connected XML: **104 tests, zero failures/errors/skips, 183.506s**. Current unit XML: **111 tests across 16 suites, zero failures/errors** (unchanged unit task up-to-date in the final invocation). Lint: **zero errors/16 original warnings**. Both debug APK tasks pass. Focused corrected lifecycle class also passes, one test in 2.271s.
+- Reproduce from the repository after `scripts/env.ps1` setup using `android/gradlew.bat -p android --no-daemon testDebugUnitTest lintDebug assembleDebug assembleDebugAndroidTest connectedDebugAndroidTest`, selecting a synthetic-data device. Test XML: `android/app/build/outputs/androidTest-results/connected/debug/` and `android/app/build/test-results/testDebugUnitTest/`; lint: `android/app/build/reports/lint-results-debug.txt`. `final-terminal-evidence.txt` preserves coordinator-observed native terminal output; the PowerShell transcript retained only its header/footer.
+- All task-specific layout/interaction, large-font/landscape and visual evidence remains below. No universal-device, real-contact, real-message or iOS-runtime claim is made. Date-context/selector discoverability in scrollable controls and baseline lint warnings remain nonblocking follow-ups.
+
+## Aggregate regression correction (2026-11-07)
+
+- First unfiltered Android run failed: 95 of 104 device tests completed, one failure, then a null-Application crash in the unchanged `ManualOpenLifecycleTest`. The fixture constructed an unattached Activity; reflective `onPause` still called the framework superclass. Failed transcript/results are retained under `artifacts/android-ux-2026-11-06/final-first-failure*`.
+- Test-only correction uses `ActivityInstrumentationTestCase2`, actual attached pause/resume callbacks, FIFO IO/main draining, and framework-owned teardown. The delayed paused request still must produce zero callbacks; a fresh resumed request must produce exactly one. No production lifecycle change, test removal/filter, or messenger launch.
+- First corrected focused run executed the intended test successfully but also discovered two private compiler-generated `test...` SAM helpers: three tests, two discovery failures. `javap` confirmed both were empty executor-barrier lambdas. Extracting the identical barrier into a non-test-prefixed helper removes that discovery collision. Failed output retained as `final-lifecycle-discovery-failure.log`.
+- Final common helper: exit 0, BUILD SUCCESSFUL in 1m53s; 111 unit tests in unchanged current XML, zero failures/errors; lint zero errors/16 baseline warnings; both APKs. Focused whole `ua.zapys.ManualOpenLifecycleTest` class: exit 0, `OK (1 test)`, 2.271s (`final-lifecycle-fix-instrumentation.log`). Complete unfiltered regression rerun is in progress; not yet claimed passing.
+
 ## Task 10 final test evidence (2026-11-07)
 
 - Actual RED fresh launch:1test1expectedfailure0errors,Week not selected; product unchanged. Log artifacts/android-ux-2026-11-06/task10-red-instrumentation.log. Test-only common helper exit0/55s.

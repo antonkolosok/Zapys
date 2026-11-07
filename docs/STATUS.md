@@ -1,10 +1,22 @@
 # Zapys — поточний стан
 
+## 2026-11-07 — all ten tasks and full Android regression complete
+
+- Tasks 1–10 have separate tested/reviewed commits through `a5563b4`. The final test-fixture correction preserves the original lifecycle assertions and adds no production workaround.
+- Full unfiltered Android regression: exit 0, BUILD SUCCESSFUL in 3m46s; 104 device tests, zero failures/errors/skips (183.506s). Current unit XML: 111 tests, zero failures/errors. Lint: zero errors/16 baseline warnings. Both APKs built. Dedicated synthetic API35 emulator only; no real contact import/message sending. iOS unchanged and unrun locally.
+- Whole-branch production review and independent scoped final-fix review approved specification, code quality and validation; no open Critical/Important findings. See `docs/reviews/android-ux-2026-11-07.md`. Remaining nonblocking UI limitation: date context/selector in the bounded scrollable controls may require scrolling, including ordinary portrait. Final evidence commit/publication pending; no merge or release authorized.
+
+## 2026-11-07 — final regression correction in progress
+
+- All ten numbered tasks have separate tested, independently reviewed commits through `a5563b4`. Whole-branch review approved production specification and quality, but final publication is blocked by a test-fixture crash.
+- Full Android regression exited 1 after 95 of 104 device tests: `ManualOpenLifecycleTest` constructs an unattached Activity and reflectively calls `onPause`; `super.onPause()` requires an Application and throws. Unit tests, lint and APK assembly completed before the device failure. This is not a passing full regression.
+- Failed log and connected results are preserved under `artifacts/android-ux-2026-11-06/final-first-failure*`. One scoped test-only fix is in progress; focused and full reruns plus independent re-review are required before the aggregate PR. No PR, merge or release.
+
 ## 2026-11-07 — Task 10 Week default verified and reviewed
 
 - Fresh calendar now starts in Week with seven date columns. Intentional Day/date selection survives actual Activity recreation and return from editor/settings; existing saved-state paths unchanged, no preference store.
 - Common helper exit0,BUILD SUCCESSFUL1m23s;111unit0failures/errors,lint0errors16originalwarnings,bothAPKs. Device22PASS includes three default/restoration/navigation cases and header,gesture,resize,landscape viewport regression. Actual freshWeek screenshot inspected.
-- /root/task10_review: specification PASS, quality APPROVED, no blockers. Separate Task10 commit pending. Full regression and whole-branch review remain before the one aggregate PR; no merge or release.
+- /root/task10_review: specification PASS, quality APPROVED, no blockers. Task10 complete in commita5563b4. Full regression and whole-branch review remain before the one aggregate PR; no merge or release.
 
 ## 2026-11-07 — Task 9 movement verified and reviewed
 
