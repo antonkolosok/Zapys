@@ -4,6 +4,7 @@ import android.test.ActivityInstrumentationTestCase2
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Rect
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -25,6 +26,8 @@ class CalendarHeaderLayoutTest:ActivityInstrumentationTestCase2<MainActivity>(Ma
   failure?.let { throw it }
  }
  private fun descendants(view:View):List<View> = listOf(view)+(if(view is ViewGroup) (0 until view.childCount).flatMap { descendants(view.getChildAt(it)) } else emptyList())
+ private fun boundsIn(root:ViewGroup,view:View):Rect = Rect(0,0,view.width,view.height).also { root.offsetDescendantRectToMyCoords(view,it) }
+ private fun directChild(root:ViewGroup,view:View):View { var child=view; while(child.parent!==root) child=child.parent as View; return child }
  private val boundaryDates=listOf("2026-12-28","2026-12-29","2026-12-30","2026-12-31","2027-01-01","2027-01-02","2027-01-03").map(LocalDate::parse)
  private inner class Fixture(val a:MainActivity,widthDp:Int,val mode:String,date:LocalDate=LocalDate.of(2026,12,30)) {
   val selected=mutableListOf<Pair<LocalDate,String>>()
@@ -47,8 +50,9 @@ class CalendarHeaderLayoutTest:ActivityInstrumentationTestCase2<MainActivity>(Ma
    for(widthDp in listOf(320,360,411)) for(mode in listOf("day","week")) {
     val f=Fixture(a,widthDp,mode)
     assertEquals("$widthDp dp $mode: Monday must start at selector content edge",f.selector.paddingLeft,f.dates.first().left)
-    assertEquals("Selector must retain normal calendar outer padding",f.screen.paddingLeft,f.selector.left)
-    assertEquals(f.screen.width-f.screen.paddingRight,f.selector.right)
+    val selectorBounds=boundsIn(f.screen,f.selector)
+    assertEquals("Selector must retain normal calendar outer padding",f.screen.paddingLeft,selectorBounds.left)
+    assertEquals(f.screen.width-f.screen.paddingRight,selectorBounds.right)
    }
   }
  }
@@ -73,7 +77,7 @@ class CalendarHeaderLayoutTest:ActivityInstrumentationTestCase2<MainActivity>(Ma
    assertEquals(7,f.headings.size)
    assertEquals(f.selector.width,f.grid.width)
    val row=f.headings.first().parent as ViewGroup
-   assertEquals(f.selector.left,row.left)
+   assertEquals(boundsIn(f.screen,f.selector).left,boundsIn(f.screen,row).left)
    // Literal 42dp is the approved time-label gutter; expected geometry is independent of header code.
    val gutter=42f*a.resources.displayMetrics.density
    f.headings.forEachIndexed { index,heading->
@@ -82,7 +86,7 @@ class CalendarHeaderLayoutTest:ActivityInstrumentationTestCase2<MainActivity>(Ma
     val actual=(heading.left+heading.right)/2f
     assertTrue("$widthDp dp column $index center $actual vs $expected",abs(actual-expected)<=1f)
    }
-   assertEquals("Compact headings sit immediately before the scrolling grid",f.screen.indexOfChild(row)+1,f.screen.indexOfChild(f.grid.parent.parent as View))
+   assertEquals("Compact headings sit immediately before the scrolling timeline",f.screen.indexOfChild(row)+1,f.screen.indexOfChild(directChild(f.screen,f.grid)))
   } }
  }
  // Catches date order or callback regressions at a month/year boundary.

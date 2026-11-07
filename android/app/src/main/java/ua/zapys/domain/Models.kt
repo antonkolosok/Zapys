@@ -38,6 +38,7 @@ interface Repository {
     fun saveService(service: Service)
     fun deleteService(id: String)
     fun saveAppointment(appointment: Appointment, allowOverlap: Boolean = false): Appointment
+    fun moveAppointment(original: Appointment, date: LocalDate, startMinute: Int, allowOverlap: Boolean = false): Appointment
     fun deleteAppointment(id: String)
     fun setReminderState(id: String, state: ReminderState)
     fun profile(): LocalProfile

@@ -5,23 +5,60 @@ import android.graphics.*
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
+import android.widget.ScrollView
 import ua.zapys.domain.*
 import java.time.LocalDate
 import kotlin.math.abs
 
 /** Canvas uses dp geometry; the companion agenda supplies native accessible controls. */
 class CalendarView(context:Context, private val theme:Theme, private val dates:List<LocalDate>, private val records:List<Appointment>,
- private val open:(Appointment)->Unit, private val empty:(LocalDate,Float)->Unit, private val resize:(Appointment)->Unit, private val previewTime:(Appointment?)->Unit):View(context) {
+ private val open:(Appointment)->Unit, private val empty:(LocalDate,Float)->Unit, private val resize:(Appointment)->Unit, private val previewTime:(Appointment?)->Unit,
+ private val move:(Appointment)->Unit={}):View(context) {
  private val density=resources.displayMetrics.density
  private val fontScale=resources.configuration.fontScale
  private val paint=Paint(Paint.ANTI_ALIAS_FLAG)
  private var selected:String?=null
  private var preview:Appointment?=null
- private var dragging:Appointment?=null
- private var possibleHandle:Appointment?=null
+ private enum class Gesture { IDLE, PENDING, MOVING, RESIZING, CANCELLED }
+ private var gesture=Gesture.IDLE
+ private var handle=false
+ private var pointerId=-1
  private val touchSlop=ViewConfiguration.get(context).scaledTouchSlop/density
  private var downX=0f; private var downY=0f; private var moved=false
  private var hit:Appointment?=null
+ private var lastX=0f; private var lastY=0f
+ private val activateMove=Runnable {
+  if(gesture==Gesture.PENDING && !moved && !handle && hit!=null) {
+   gesture=Gesture.MOVING; selected=hit!!.id
+   parent?.requestDisallowInterceptTouchEvent(true)
+   updatePreview(); postOnAnimation(edgeScroll)
+  }
+ }
+ private fun scrollParent():ScrollView? {
+  var node=parent
+  while(node!=null) { if(node is ScrollView) return node; node=node.parent }
+  return null
+ }
+ private val edgeScroll=object:Runnable {
+  override fun run() {
+   if(gesture!=Gesture.MOVING) return
+   val scroll=scrollParent() ?: return
+   val bounds=Rect()
+   if(getLocalVisibleRect(bounds) && lastX>=CalendarGeometry.GUTTER && lastX<width/density) {
+    val y=lastY*density
+    val edge=48f*density
+    val step=when { y<bounds.top+edge->-8; y>bounds.bottom-edge->8; else->0 }
+    if(step!=0) {
+     val before=scroll.scrollY
+     val maximum=(height-scroll.height).coerceAtLeast(0)
+     scroll.scrollTo(scroll.scrollX,(before+(step*density).toInt()).coerceIn(0,maximum))
+     lastY+=(scroll.scrollY-before)/density
+     updatePreview()
+    }
+   }
+   postOnAnimation(this)
+  }
+ }
  private val boxes=mutableListOf<Pair<Appointment,RectF>>()
  init { minimumHeight=(CalendarGeometry.top(1440)*density).toInt(); importantForAccessibility=IMPORTANT_FOR_ACCESSIBILITY_NO; contentDescription="Календар; доступний список нижче" }
  override fun onMeasure(w:Int,h:Int) { setMeasuredDimension(MeasureSpec.getSize(w),minimumHeight) }
@@ -93,29 +130,76 @@ class CalendarView(context:Context, private val theme:Theme, private val dates:L
   }
   canvas.restore()
  }
+ private fun dayAt(x:Float):LocalDate? {
+  if(dates.isEmpty() || x<CalendarGeometry.GUTTER || x>=width/density) return null
+  val column=(width/density-CalendarGeometry.GUTTER)/dates.size
+  return dates.getOrNull(((x-CalendarGeometry.GUTTER)/column).toInt())
+ }
+ private fun updatePreview() {
+  val original=hit ?: return
+  preview=when(gesture) {
+   Gesture.MOVING->dayAt(lastX)?.let { CalendarGeometry.move(original,it,(lastY-downY)/CalendarGeometry.SCALE) }
+   Gesture.RESIZING->CalendarGeometry.resize(original,lastY/CalendarGeometry.SCALE)
+   else->null
+  }
+  previewTime(preview); invalidate()
+ }
+ private fun finishGesture(next:Gesture=Gesture.IDLE) {
+  removeCallbacks(activateMove); removeCallbacks(edgeScroll)
+  gesture=next; handle=false; pointerId=-1; hit=null; preview=null
+  previewTime(null); parent?.requestDisallowInterceptTouchEvent(false); invalidate()
+ }
+ private fun validRelease(x:Float,y:Float):Boolean {
+  if(dayAt(x)==null || y<0 || y>=height/density) return false
+  if(!isAttachedToWindow) return true
+  val visible=Rect()
+  return getLocalVisibleRect(visible) && visible.contains((x*density).toInt(),(y*density).toInt())
+ }
  override fun onTouchEvent(event:MotionEvent):Boolean {
-  if(!isEnabled) return false
+  if(!isEnabled) { finishGesture(); return false }
   val x=event.x/density; val y=event.y/density
   when(event.actionMasked) {
-   MotionEvent.ACTION_DOWN->{ downX=x; downY=y; moved=false; dragging=null; preview=null; hit=boxes.lastOrNull { it.second.contains(x,y) }?.first
+   MotionEvent.ACTION_DOWN->{
+    finishGesture(); downX=x; downY=y; lastX=x; lastY=y; moved=false; pointerId=event.getPointerId(0)
+    gesture=Gesture.PENDING; hit=boxes.lastOrNull { it.second.contains(x,y) }?.first
     val box=boxes.lastOrNull { it.first.id==hit?.id }
-    possibleHandle=if(box!=null && y>=box.second.bottom-minOf(10f,box.second.height()/3)) hit else null
-    // Reserve the potential grip stream from the ScrollView, but do not resize yet.
-    if(possibleHandle!=null) parent?.requestDisallowInterceptTouchEvent(true)
+    handle=box!=null && y>=box.second.bottom-minOf(10f,box.second.height()/3)
+    if(handle) parent?.requestDisallowInterceptTouchEvent(true)
+    else if(hit!=null) postDelayed(activateMove,ViewConfiguration.getLongPressTimeout().toLong())
     return true
    }
-   MotionEvent.ACTION_MOVE->{ moved=moved || abs(x-downX)>touchSlop || abs(y-downY)>touchSlop
-    if(dragging==null && possibleHandle!=null && abs(y-downY)>touchSlop) { dragging=possibleHandle; selected=dragging!!.id }
-    dragging?.let { preview=CalendarGeometry.resize(it,y/CalendarGeometry.SCALE); previewTime(preview); invalidate() }; return true }
-   MotionEvent.ACTION_UP->{ moved=moved || abs(x-downX)>touchSlop || abs(y-downY)>touchSlop
-    val candidate=preview; val original=dragging; dragging=null; possibleHandle=null; preview=null; previewTime(null); parent?.requestDisallowInterceptTouchEvent(false); invalidate()
-    if(candidate!=null && original!=null && candidate.endMinute!=original.endMinute) resize(candidate)
-    else if(!moved && original==null) { performClick(); hit?.let(open) ?: run { if(x>=CalendarGeometry.GUTTER) { val col=((x-CalendarGeometry.GUTTER)/((width/density-CalendarGeometry.GUTTER)/dates.size)).toInt().coerceIn(0,dates.lastIndex); empty(dates[col],y/CalendarGeometry.SCALE) } } }
-    return true }
-   MotionEvent.ACTION_CANCEL->{ dragging=null; possibleHandle=null; hit=null; preview=null; previewTime(null); parent?.requestDisallowInterceptTouchEvent(false); invalidate(); return true }
+   MotionEvent.ACTION_POINTER_DOWN,MotionEvent.ACTION_POINTER_UP->{ finishGesture(Gesture.CANCELLED); return true }
+   MotionEvent.ACTION_MOVE->{
+    if(gesture==Gesture.CANCELLED || gesture==Gesture.IDLE) return true
+    if(event.pointerCount!=1 || event.getPointerId(0)!=pointerId) { finishGesture(Gesture.CANCELLED); return true }
+    lastX=x; lastY=y; moved=moved || abs(x-downX)>touchSlop || abs(y-downY)>touchSlop
+    if(gesture==Gesture.PENDING && moved) {
+     removeCallbacks(activateMove)
+     if(handle && abs(y-downY)>touchSlop) { gesture=Gesture.RESIZING; selected=hit?.id }
+    }
+    if(gesture==Gesture.MOVING || gesture==Gesture.RESIZING) updatePreview()
+    return true
+   }
+   MotionEvent.ACTION_UP->{
+    val state=gesture; val original=hit
+    moved=moved || abs(x-downX)>touchSlop || abs(y-downY)>touchSlop
+    lastX=x; lastY=y
+    if(state==Gesture.MOVING || state==Gesture.RESIZING) updatePreview()
+    val candidate=preview; val valid=validRelease(x,y)
+    finishGesture()
+    if(valid && candidate!=null && original!=null && candidate!=original) {
+     if(state==Gesture.MOVING) move(candidate) else if(state==Gesture.RESIZING) resize(candidate)
+    } else if(valid && state==Gesture.PENDING && !moved) {
+     performClick(); original?.let(open) ?: dayAt(x)?.let { empty(it,y/CalendarGeometry.SCALE) }
+    }
+    return true
+   }
+   MotionEvent.ACTION_CANCEL->{ finishGesture(Gesture.CANCELLED); return true }
   }
-  return super.onTouchEvent(event)
+  return true
  }
+ override fun onDetachedFromWindow() { finishGesture(); super.onDetachedFromWindow() }
+ override fun onWindowFocusChanged(hasWindowFocus:Boolean) { if(!hasWindowFocus) finishGesture(Gesture.CANCELLED); super.onWindowFocusChanged(hasWindowFocus) }
  override fun performClick():Boolean { super.performClick(); return true }
  companion object { fun time(minute:Int)="%02d:%02d".format(minute/60,minute%60) }
 }

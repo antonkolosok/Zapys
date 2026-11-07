@@ -1,5 +1,14 @@
 # Verification evidence — updated 2026-11-07
 
+## Task 9 movement test evidence (2026-11-07; reviewed)
+
+- Behavioral REDs: four geometry failures against isolated no-op API; five actual SQLite failures; five native gesture failures in real ScrollView; clamped target1379 incorrectly re-snapped to1372; missing accessible move/confirmation; landscape New Appointment visible15/126px. Logs/XML and staged commands are recorded in the active ledger and artifacts/android-ux-2026-11-06/task9-*.
+- Latest common helper exit0,BUILD SUCCESSFUL55s;111unit0failures/errors,16suites,lint0errors16originalwarnings,bothAPKs. Product unchanged since normal37test pass; subsequent edits add test harness/orientation evidence only.
+- Normal suite37PASS,72.721s,exit0 (task9-green-instrumentation.log): seven gesture, five existing interaction/resize, six persistence, five screen, one viewport, six header, one color, four device persistence and two clock tests. Covers historical/legacy snapshot preservation, exact clamped target, conflict/override, SQL-trigger rollback, stale edit, no preview writes, confirm exactly once, actual active-drag lifecycle, real multipointer and edge scroll.
+- Actualfont2 run6PASS,41.016s (task9-large-instrumentation.log) proves screen behavior and landscapeviewport. Initial dialog PNGs were portrait despite external rotation, so this was not accepted as landscape-dialog evidence. Added explicit requested-landscape plus actual config/window-bounds assertion: dedicated dialog+viewport2PASS,18.207s (task9-landscape-large-instrumentation.log). Eleven final images are task9-verified-rendering; three new dialog images have landscape suffixes.
+- Preserved first failed candidate: missing accessibility readiness and test callback nested runOnMainSync crash, diagnosed from crashbuffer (task9-first-green-crash.txt). Corrected harness and compile-only AccessibilityAction constant mistake before passing reruns; no product workaround or weakened assertion. Identity-checked synthetic emulator app reset removed interrupted fixtures; no real device/data. Actualfont restored1.0 and Portrait after checks.
+- Independent /root/task9_review approved specification and quality; separate Task9 commit pending. Visual inspection conclusions and control-scroll tradeoff are recorded in implementer report/ledger; no claim that all controls fit simultaneously on small landscape screens.
+
 ## Task 8 final test evidence (2026-11-07)
 
 - Domain RED: common helper exit1,BUILD FAILED32s,107tests1expectedfailure; fresh status expectedPLANNED actualDRAFT. Saved task8-red-unit.xml. Device RED after assemble-only exit0/27s: one picker test,oneexpectedfailure,zeroerrors,2.174s; expected four normal choices,actual includes leading Draft. Log task8-picker-red-instrumentation.log. Product unchanged for both reproductions.

@@ -1,11 +1,17 @@
 # Zapys — поточний стан
 
+## 2026-11-07 — Task 9 movement verified and reviewed
+
+- Geometry, narrow snapshot-preserving transaction, long-press movement, edge scrolling, accessible move and confirmation flow implemented. Landscape controls/timeline fix included.
+- Current candidate common helper passes111unit tests,lint0errors/16originalwarnings,bothAPKs. Normal device suite37PASS; four normal screenshots inspected. Large-font6tests and explicitly verified landscape2tests PASS; eleven images inspected across normal/large/landscape batches. Independent /root/task9_review approved specification and quality; separate Task9 commit pending.
+- Earlier expected geometry/persistence/gesture/screen/viewport failures and corrected test-harness crash/compile issue are retained in the ledger; they are not passing evidence. Task9 commit pending,Task10pending. No PR,merge or release.
+
 ## 2026-11-07 — Task 8 Planned default verified and reviewed
 
 - Fresh appointment forms now start as Planned. Normal picker uses four explicit statuses; loaded drafts display Planned for primary save without mutating their in-memory/persisted draft identity during rendering.
 - Explicit/back draft save, calendar30-minute drafts, repeat resets and existing normal status round-trips remain covered. Failed validation plus real recreation retains raw fields and draft identity.
 - Common helper passed:107unit tests,lint0errors/16originalwarnings,bothAPKs. Device33PASS covers status choices/mapping/persistence, client selection, draft/repeat behavior, validation and existing calendar/header interactions.
-- /root/task8_review approved specification and quality, no blockers. Task8 separate commit pending,Tasks9–10pending. No PR,merge or release.
+- /root/task8_review approved specification and quality, no blockers. Task8 complete in commit9b7874a;Task9 in progress,Task10pending. No PR,merge or release.
 
 ## 2026-11-07 — Task 7 recipient and client-selection verified and reviewed
 

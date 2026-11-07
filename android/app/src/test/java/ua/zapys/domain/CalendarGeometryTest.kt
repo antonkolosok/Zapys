@@ -6,6 +6,32 @@ import org.junit.Test
 
 class CalendarGeometryTest {
  private val day=LocalDate.of(2026,12,31)
+ @Test fun moveSnapsDeltaAndPreservesEveryOtherField() {
+  val original=Appointment("move",day,600,660,"client","Historical","legacy",123,listOf(ServiceSnapshot("s","Snapshot",60,123,"service note",456)),"note",AppointmentStatus.COMPLETED,true,999,true)
+  assertEquals(original.copy(startMinute=630,endMinute=690),CalendarGeometry.move(original,day,30f))
+  assertEquals(original,CalendarGeometry.move(original,day,7f))
+  assertEquals(original.copy(startMinute=615,endMinute=675),CalendarGeometry.move(original,day,8f))
+  assertEquals(original.copy(startMinute=585,endMinute=645),CalendarGeometry.move(original,day,-8f))
+  assertEquals(600,original.startMinute)
+ }
+ @Test fun horizontalMovePreservesNonQuarterMinutesAndCrossesYear() {
+  val original=Appointment("move",day,607,667)
+  assertEquals(original.copy(date=LocalDate.of(2027,1,1)),CalendarGeometry.move(original,LocalDate.of(2027,1,1),0f))
+ }
+ @Test fun moveClampsWithoutShorteningDuration() {
+  val original=Appointment("move",day,607,667)
+  assertEquals(original.copy(startMinute=0,endMinute=60),CalendarGeometry.move(original,day,-10000f))
+  assertEquals(original.copy(startMinute=1379,endMinute=1439),CalendarGeometry.move(original,day,10000f))
+ }
+ @Test fun moveRejectsInvalidCoordinates() {
+  val original=Appointment("move",day,600,660)
+  for(delta in listOf(Float.NaN,Float.POSITIVE_INFINITY,Float.NEGATIVE_INFINITY)) {
+   try { CalendarGeometry.move(original,day,delta); fail("Non-finite delta accepted") } catch(_:IllegalArgumentException) {}
+  }
+  for(value in listOf(original.copy(endMinute=600),original.copy(startMinute=-1),original.copy(endMinute=1440),original.copy(endMinute=599))) {
+   try { CalendarGeometry.move(value,day,0f); fail("Invalid interval accepted") } catch(_:IllegalArgumentException) {}
+  }
+ }
  @Test fun finalDraftAndNavigation() {
   val d=CalendarGeometry.draft(day,1439f,"d")
   assertEquals(1409,d.startMinute); assertEquals(1439,d.endMinute)
