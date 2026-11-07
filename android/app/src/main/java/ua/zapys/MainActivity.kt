@@ -47,7 +47,7 @@ class MainActivity : Activity() {
  private var appointmentDraft: AppointmentDraft?=null
  private var overrides=Bundle(); var inlineClientName=""; var inlineClientPhone=""; var inlineClientId=newId()
  private var selectedDate=java.time.LocalDate.now().toString()
- private var calendarMode="day"
+ private var calendarMode="week"
  private var contactOwner: String?=null
  private var pendingContact: Pair<String,String>?=null
  private var pendingContactUri: String?=null

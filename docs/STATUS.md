@@ -1,10 +1,16 @@
 # Zapys — поточний стан
 
+## 2026-11-07 — Task 10 Week default verified and reviewed
+
+- Fresh calendar now starts in Week with seven date columns. Intentional Day/date selection survives actual Activity recreation and return from editor/settings; existing saved-state paths unchanged, no preference store.
+- Common helper exit0,BUILD SUCCESSFUL1m23s;111unit0failures/errors,lint0errors16originalwarnings,bothAPKs. Device22PASS includes three default/restoration/navigation cases and header,gesture,resize,landscape viewport regression. Actual freshWeek screenshot inspected.
+- /root/task10_review: specification PASS, quality APPROVED, no blockers. Separate Task10 commit pending. Full regression and whole-branch review remain before the one aggregate PR; no merge or release.
+
 ## 2026-11-07 — Task 9 movement verified and reviewed
 
 - Geometry, narrow snapshot-preserving transaction, long-press movement, edge scrolling, accessible move and confirmation flow implemented. Landscape controls/timeline fix included.
-- Current candidate common helper passes111unit tests,lint0errors/16originalwarnings,bothAPKs. Normal device suite37PASS; four normal screenshots inspected. Large-font6tests and explicitly verified landscape2tests PASS; eleven images inspected across normal/large/landscape batches. Independent /root/task9_review approved specification and quality; separate Task9 commit pending.
-- Earlier expected geometry/persistence/gesture/screen/viewport failures and corrected test-harness crash/compile issue are retained in the ledger; they are not passing evidence. Task9 commit pending,Task10pending. No PR,merge or release.
+- Current candidate common helper passes111unit tests,lint0errors/16originalwarnings,bothAPKs. Normal device suite37PASS; four normal screenshots inspected. Large-font6tests and explicitly verified landscape2tests PASS; eleven images inspected across normal/large/landscape batches. Independent /root/task9_review approved specification and quality; Task9 complete in commitfe7766a.
+- Earlier expected geometry/persistence/gesture/screen/viewport failures and corrected test-harness crash/compile issue are retained in the ledger; they are not passing evidence. Task9 complete in commitfe7766a;Task10in progress. No PR,merge or release.
 
 ## 2026-11-07 — Task 8 Planned default verified and reviewed
 

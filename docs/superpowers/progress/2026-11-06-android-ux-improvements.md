@@ -23,8 +23,8 @@ Prepared 2026-11-06. Observed baseline HEAD `384f290`; no implementation of this
 | 6 | Contact picker at top | COMPLETE | 101 unit PASS; lint 0 errors/16 original warnings; APKs; 28 device PASS; four images inspected | /root/task6_review: spec APPROVED, quality APPROVED | 94bd905 |
 | 7 | Recipient removal and selected-client precedence | COMPLETE | 106 unit PASS; lint 0 errors/16 original warnings; APKs; 35 device PASS | /root/task7_review: 7a/7b spec APPROVED, quality APPROVED | 31fd586 |
 | 8 | Planned status by default | COMPLETE | 107 unit PASS; lint 0 errors/16 original warnings; APKs; 33 device PASS | /root/task8_review: spec APPROVED, quality APPROVED | 9b7874a |
-| 9 | Calendar move/drag | VERIFIED; COMMIT PENDING | 111 unit PASS; lint 0 errors/16 original warnings; APKs; 37 normal + 6 large + 2 explicit-landscape device PASS; images inspected | /root/task9_review: spec APPROVED, quality APPROVED | pending |
-| 10 | Week mode by default | PENDING | — | — | — |
+| 9 | Calendar move/drag | COMPLETE | 111 unit PASS; lint 0 errors/16 original warnings; APKs; 37 normal + 6 large + 2 explicit-landscape device PASS; images inspected | /root/task9_review: spec APPROVED, quality APPROVED | fe7766a |
+| 10 | Week mode by default | VERIFIED; COMMIT PENDING | 111 unit PASS; lint 0 errors/16 original warnings; APKs; 22 device PASS; freshWeek image inspected | /root/task10_review: spec PASS, quality APPROVED | pending |
 
 For each task append commands, exit codes, executed test counts, device details, reviewer verdict and actual commit SHA. Record blockers explicitly. Do not mark a task complete based only on authored tests, code review, compilation or another agent's unsupported claim.
 
@@ -235,3 +235,14 @@ Apply the proposed rulings before dispatching Task 1; finding 1 must be carried 
 - Implementer inspected all11finalimages across batches, including three actual1920x1080 font2 landscape dialogs: fields reachable through internal scrolling, actionbuttons fullyvisible, confirmationdate/time readable. Capped controls require scrolling to date navigation on small windows; passed to independent reviewer /root/task9_review for assessment. No claim of simultaneous visibility for all controls.
 
 - Independent /root/task9_review approved specification and code quality, no blocking code/evidence gaps. Minor: capped controls hide selecteddate until scrolled in small landscape; keep compact-date refinement as documented follow-up, not an acceptance blocker. Existing16lint warnings remain. Reviewer inspected five relevant images, XML/logs and focused transaction/lifecycle/drawing helpers. No new dark-drag screenshot matrix claimed; theme-derived drawing/shared controls and existing dark/header/color regressions remain. No additional required check inferred from absence of a full visual matrix. Separate Task9 commit pending.
+
+- Task9 complete in commitfe7766a (feat(android): move appointments within calendar), bothreviewsapproved; minor date-context follow-up and baselinewarnings documented. Task10 BASEfe7766a; acceptance/files/checks in approved scoped brief.
+### Task 10 execution evidence
+
+- BASEfe7766a; implementer /root/task10_implementer loaded actual relevant Superpowers skills. Source inspection found only initial calendarMode=day; restoration paths already preserve mode/date.
+- Test-only common helper exit0,BUILD SUCCESSFUL55s. Actual device RED CalendarDefaultModeTest#testFreshLaunchSelectsWeekAndSevenDateColumns,labeltask10-red:exit1,1test1expectedfailure0errors,2.81s,Week switch not selected on fresh launch. Product unchanged. Log artifacts/android-ux-2026-11-06/task10-red-instrumentation.log.
+- Default change, retained Day/date lifecycle/navigation coverage,GREEN,independentreview,commit pending.
+- Remote refresh: git fetch origin exit0,origin/main now9392742 (existing MVP PR1 merge). Mergebase with feature is384f290, the original MVP commit; no branch merge performed. No Android UX PR created yet.
+- Final Task10 common helper exit0,BUILD SUCCESSFUL1m23s;111unit0failures/errors16suites,lint0errors16originalwarnings,bothAPKs. Device CalendarDefaultModeTest,CalendarHeaderLayoutTest,CalendarScrollGestureTest,CalendarViewInteractionTest,CalendarViewportTest labeltask10-green:22PASS,exit0,23.722s. Log artifacts/android-ux-2026-11-06/task10-green-instrumentation.log. FreshWeek screenshot pulled to task10-final-rendering/fresh-week.png; visualinspection/review/commit pending.
+
+- Independent /root/task10_review: specification PASS, quality APPROVED, no Critical/Important findings; inspected statepaths,actualRED/GREEN/XML/lint/freshWeekimage. Separate Task10 commit pending; finalregression/wholebranchreview gate remains.

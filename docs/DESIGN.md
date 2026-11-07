@@ -26,7 +26,7 @@ Use 20-unit page margins, 12-unit row gaps, 16–20-unit section gaps; compact c
 
 ## Navigation and screens
 
-Four persistent destinations: **Календар**, **Клієнти**, **Послуги**, **Налаштування**. Use platform bottom navigation / tab bar. Appointment, client and service editing opens a pushed full-screen form with back navigation. The calendar remains the initial screen, requiring no account. Preserve selected date and day/week mode when returning from details.
+Four persistent destinations: **Календар**, **Клієнти**, **Послуги**, **Налаштування**. Use platform bottom navigation / tab bar. Appointment, client and service editing opens a pushed full-screen form with back navigation. The calendar remains the initial screen, requiring no account. A fresh Android calendar opens in Week mode with seven date columns. Preserve the selected date and intentional Day/Week choice through Activity recreation and return from editors or settings; apply the Week default only to fresh state, without a new persistent preference.
 
 Android bottom navigation uses four equal-width targets with baseline alignment disabled. Full destination labels wrap at the user's font scale; the row takes the tallest label's measured height and all four buttons fill that common height, with centered text and a minimum 48dp touch height. Selected destinations use primary fill and text-on-primary as well as selected accessibility semantics. Preserve the root's system-bar padding so every target stays above bottom insets and inside landscape side insets.
 

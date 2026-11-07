@@ -1,5 +1,12 @@
 # Verification evidence — updated 2026-11-07
 
+## Task 10 final test evidence (2026-11-07)
+
+- Actual RED fresh launch:1test1expectedfailure0errors,Week not selected; product unchanged. Log artifacts/android-ux-2026-11-06/task10-red-instrumentation.log. Test-only common helper exit0/55s.
+- Final common helper exit0,BUILD SUCCESSFUL1m23s;111unit0failures/errors16suites,lint0errors16originalwarnings,bothAPKs. CalendarDefaultModeTest,CalendarHeaderLayoutTest,CalendarScrollGestureTest,CalendarViewInteractionTest,CalendarViewportTest:22PASS,23.722s,exit0. Log task10-green-instrumentation.log under same artifacts directory.
+- Three new cases prove fresh selectedWeek+seven distinct headings, explicitDay/exact date through actualframework recreation, editor/settingsBack roundtrips retaining selection. Actions scroll native controls and assert full clipped-ancestor visibility. task10-final-rendering/fresh-week.png directly inspected: selectedWeek,seven aligned headings/columns,usabletimeline/navigation. Existing control-scroll clipping limitation remains documented under Task9.
+- Independent /root/task10_review: specification PASS, quality APPROVED, no Critical/Important findings. Fullfinalregression/wholebranchreview still pending.
+
 ## Task 9 movement test evidence (2026-11-07; reviewed)
 
 - Behavioral REDs: four geometry failures against isolated no-op API; five actual SQLite failures; five native gesture failures in real ScrollView; clamped target1379 incorrectly re-snapped to1372; missing accessible move/confirmation; landscape New Appointment visible15/126px. Logs/XML and staged commands are recorded in the active ledger and artifacts/android-ux-2026-11-06/task9-*.
