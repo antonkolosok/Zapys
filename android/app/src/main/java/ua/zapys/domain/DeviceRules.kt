@@ -8,7 +8,7 @@ object DeviceRules {
  fun rebaseTerminal(row:Reminder,scheduledAt:Long)=if(row.state in setOf(ReminderState.HANDED_OFF,ReminderState.CANCELLED)) row.copy(scheduledAt=scheduledAt) else row
  fun canLaunch(resumed:Boolean,requestedEpoch:Int,currentEpoch:Int)=resumed && requestedEpoch==currentEpoch
  fun reconcile(reminder: Reminder, now: Long): Reminder = if(reminder.state==ReminderState.SCHEDULED && reminder.scheduledAt<=now) reminder.copy(state=ReminderState.NEEDS_ACTION) else reminder
- fun actionable(id: String, rows: List<Reminder>): Reminder? = rows.firstOrNull { it.id==id && it.recipient.isNotBlank() && it.state in setOf(ReminderState.NEEDS_ACTION,ReminderState.ERROR) }
+ fun actionable(id: String, rows: List<Reminder>): Reminder? = rows.firstOrNull { it.id==id && it.state in setOf(ReminderState.NEEDS_ACTION,ReminderState.ERROR) }
  fun alarmIds(rows: List<Reminder>, notificationsEnabled: Boolean): Set<String> = if(notificationsEnabled) rows.filter { it.state==ReminderState.SCHEDULED }.map { it.id }.toSet() else emptySet()
  fun staleIds(retained: Set<String>, desired: Set<String>): Set<String> = retained-desired
 }

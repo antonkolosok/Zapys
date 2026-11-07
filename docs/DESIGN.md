@@ -66,13 +66,15 @@ Readable labels take priority over visible color intensity. Give each text row a
 
 Use visible labels, not placeholder-only fields. Date and time use native pickers with 24-hour display; phone uses telephone keyboard, price uses decimal keyboard, durations positive whole minutes. Required client name/phone and required appointment date/start/end show `*`. Optional surname, patronymic, note and color can sit in a **Додатково** disclosure. Notes are text-only with a 2000-character counter near the limit.
 
+In the Android appointment editor, place all inline new-client labels, guidance and fields in one container. Show it only for **Без клієнта**; derive visibility from the selected client ID initially and after recreation. Keep inactive raw text so toggling back restores it. Save actions use the selected existing client even when hidden inline text is nonblank or invalid. Only the active inline path validates and creates a client; a client already saved before an appointment failure becomes the selected identity for retry.
+
 Services are vertical cards numbered by selection order, each with name, optional duration/price/note and remove button. Show **0 / 5** through **5 / 5**. At five, disable adding and explain **У записі вже 5 послуг**. Keep removal available. Empty service selection is valid. Duration suggestion is available only when every selected duration is known. Changing end manually preserves it; use an explicit **За тривалістю послуг** action to reapply the suggestion. Unknown prices remain distinct from free: a partial total reads **600 ₴ + невказана ціна**, rather than treating null as zero. Mark payment using **Не оплачено / Оплачено**, with optional **Фактично отримано, ₴**.
 
 Status labels: **Заплановано**, **Завершено**, **Скасовано**, **Не з'явився / не з'явилася**; draft stays separate. Destructive actions name the affected record and ask confirmation. Back from a changed form offers save draft where valid, discard, or continue editing; never discard silently. Preserve input after validation and database failures.
 
 ## Reminders and graceful errors
 
-Client preferences contain enabled switch, messenger, recipient, lead time and editable template. Channel names remain Viber, WhatsApp, Telegram, Instagram. Explain **До 1 нагадування на запис** and **Автоматичне надсилання не підключено. Ви можете підготувати повідомлення та відкрити месенджер вручну.** Template variables insert appointment text literally. Show a message preview before opening the system composer.
+Client preferences contain enabled switch, messenger, lead time and editable template. Android forms omit the recipient field and explain **Одержувача ви обираєте в месенджері під час ручного надсилання.** Preserve stored legacy recipient values without displaying them in reminder rows or preview titles. Blank recipient values do not block enabled reminders or manual sharing; retain time, state and lifecycle checks. Channel names remain Viber, WhatsApp, Telegram, Instagram. Explain **До 1 нагадування на запис** and **Автоматичне надсилання не підключено. Ви можете підготувати повідомлення та відкрити месенджер вручну.** Template variables insert appointment text literally. Show a message preview before opening the system composer.
 
 | Stored state | Visible wording |
 | --- | --- |

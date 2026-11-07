@@ -15,7 +15,6 @@ object Rules {
         note(c.note)
         requireValid(c.reminder.leadMinutes in 0..525600, "Час нагадування: від 0 до 525600 хв")
         note(c.reminder.template)
-        if (c.reminder.enabled) requireValid(c.reminder.recipient.isNotBlank(), "Вкажіть одержувача нагадування")
     }
     fun validateService(s: Service) {
         requireValid(s.name.isNotBlank(), "Вкажіть назву послуги")

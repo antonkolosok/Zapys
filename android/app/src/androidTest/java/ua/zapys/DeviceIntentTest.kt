@@ -28,4 +28,13 @@ class DeviceIntentTest: AndroidTestCase() {
   assertEquals("literal $1",intent.getStringExtra(Intent.EXTRA_TEXT))
   assertNull(intent.data)
  }
+ fun testBlankAndLegacyRecipientProduceSameManualShareWithoutAddressExtras() {
+  val r=Reminder(appointmentId="synthetic",scheduledAt=1,text="Synthetic manual preview",channel=Channel.TELEGRAM,recipient="")
+  for(recipient in listOf(""," legacy recipient ")) {
+   val intent=MessengerShare.intent(r.copy(recipient=recipient))
+   assertEquals(Intent.ACTION_SEND,intent.action); assertEquals("org.telegram.messenger",intent.`package`)
+   assertEquals("text/plain",intent.type); assertEquals("Synthetic manual preview",intent.getStringExtra(Intent.EXTRA_TEXT))
+   assertNull(intent.data); assertEquals(setOf(Intent.EXTRA_TEXT),intent.extras!!.keySet())
+  }
+ }
 }

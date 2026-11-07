@@ -102,7 +102,8 @@ class ClientContactFormTest : ActivityInstrumentationTestCase2<MainActivity>(Mai
   assertEquals(c.color,picker(a).selectedColor)
   assertEquals(c.reminder.enabled,views(a.window.decorView).filterIsInstance<Switch>().single().isChecked)
   assertEquals(c.reminder.channel.ordinal,views(a.window.decorView).filterIsInstance<Spinner>().single().selectedItemPosition)
-  assertEquals(c.reminder.recipient,field(a,"Одержувач у месенджері").text.toString())
+  assertTrue("Recipient is chosen in the messenger",views(a.window.decorView).filterIsInstance<TextView>().none { it.contentDescription=="Одержувач у месенджері" || it.text.toString()=="Одержувач у месенджері" })
+  SQLiteRepository(a).use { assertEquals(c.reminder.recipient,it.clients().single { saved->saved.id==c.id }.reminder.recipient) }
   assertEquals(c.reminder.leadMinutes.toString(),field(a,"За скільки хвилин (1–525600 для нагадувань)").text.toString())
   assertEquals(c.reminder.template,field(a,"Шаблон: [ім’я], [дата], [час], [послуги]").text.toString())
  }
@@ -142,6 +143,29 @@ class ClientContactFormTest : ActivityInstrumentationTestCase2<MainActivity>(Mai
   SQLiteRepository(a).use { assertEquals(original,it.clients().single { c->c.id==original.id }); assertEquals(beforeClients.size+1,it.clients().size) }
  }
  // Catches cancellation clearing manual inputs or leaving the form unusable.
+ fun testSavingEditedClientPreservesHiddenLegacyRecipientExactly() {
+  val a=start(); val original=metadata(); openForm(a,original)
+  onMain {
+   assertMetadata(a,original)
+   field(a,"Ім’я *").setText("Task 7 legacy synthetic")
+   button(a,"Зберегти клієнта").performClick()
+  }
+  await("Edited client did not save") { views(a.window.decorView).filterIsInstance<EditText>().none { it.contentDescription=="Телефон *" } }
+  SQLiteRepository(a).use { repo ->
+   val saved=repo.clients().single { it.id==original.id }
+   assertEquals(original.reminder,saved.reminder); assertEquals(original.phone,saved.phone)
+   assertEquals("Task 7 legacy synthetic",saved.firstName)
+  }
+ }
+ fun testEnabledBlankRecipientClientSavesWithoutRecipientField() {
+  val a=start(); openForm(a)
+  onMain {
+   assertTrue(views(a.window.decorView).filterIsInstance<TextView>().none { it.contentDescription=="Одержувач у месенджері" || it.text.toString()=="Одержувач у месенджері" })
+   views(a.window.decorView).filterIsInstance<Switch>().single().isChecked=true
+  }
+  saveManual(a,"Task 7 blank recipient synthetic","0670000713")
+  SQLiteRepository(a).use { val saved=it.clients().single { c->c.firstName=="Task 7 blank recipient synthetic" }; assertTrue(saved.reminder.enabled); assertEquals("",saved.reminder.recipient) }
+ }
  fun testCancelledSelectionKeepsInputsAndManualSaveUsable() {
   val a=start(); openForm(a)
   onMain { field(a,"Ім’я *").setText("Task 6 cancel synthetic"); field(a,"Телефон *").setText("0670000604") }

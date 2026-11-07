@@ -20,8 +20,8 @@ Prepared 2026-11-06. Observed baseline HEAD `384f290`; no implementation of this
 | 3 | Preset and custom-color palette | COMPLETE | 84 unit; lint 0 errors/16 original warnings; APKs; 10 color + 11 calendar PASS; 13 final images inspected | /root/task3_review: spec APPROVED, quality APPROVED | 14c2bdd |
 | 4 | Ukrainian phone validation | COMPLETE | 92 unit PASS; lint 0 errors/16 original warnings; APKs; 35 device PASS | /root/task4_review: spec APPROVED, quality APPROVED | d4ac5c5 |
 | 5 | Separate 50-character name limits | COMPLETE | 101 unit PASS; lint 0 errors/16 original warnings; APKs; 40 device PASS | /root/task5_review: spec PASS, quality APPROVED | aee0b0c |
-| 6 | Contact picker at top | VERIFIED; COMMIT PENDING | 101 unit PASS; lint 0 errors/16 original warnings; APKs; 28 device PASS; four images inspected | /root/task6_review: spec APPROVED, quality APPROVED | pending |
-| 7 | Recipient removal and selected-client precedence | PENDING | — | — | — |
+| 6 | Contact picker at top | COMPLETE | 101 unit PASS; lint 0 errors/16 original warnings; APKs; 28 device PASS; four images inspected | /root/task6_review: spec APPROVED, quality APPROVED | 94bd905 |
+| 7 | Recipient removal and selected-client precedence | VERIFIED; COMMIT PENDING | 106 unit PASS; lint 0 errors/16 original warnings; APKs; 35 device PASS | /root/task7_review: 7a/7b spec APPROVED, quality APPROVED | pending |
 | 8 | Planned status by default | PENDING | — | — | — |
 | 9 | Calendar move/drag | PENDING | — | — | — |
 | 10 | Week mode by default | PENDING | — | — | — |
@@ -190,3 +190,15 @@ Apply the proposed rulings before dispatching Task 1; finding 1 must be carried 
 - Implementer directly inspected four narrow light/dark normal/large images named in task-6-report.md: full contact label, correct order, no clipping/overlap. Remaining renders generated/measured. Independent reviewer /root/task6_review dispatched.
 
 - Independent /root/task6_review: specification APPROVED, quality APPROVED, no blockers. Read actual logs and four named native images; fixture limitations and existing warnings recorded. Separate Task6 commit pending.
+
+- Task6 complete in commit94bd905 (fix(android): place contact picker at top of client form); review clean. Task7 BASE94bd905; both7a/7b acceptance/files/checks recorded in approved scoped brief.
+
+### Task 7 execution evidence
+
+- BASE94bd905; implementer /root/task7_implementer loaded actual relevant Superpowers skills. Both parts remain one task.
+- Behavioral RED common helper exit1, BUILD FAILED42s,106tests7failures. Three selected-client/hidden-inline/retry failures; four blank-recipient validation/actionability failures across DeviceRulesTest and IndependentDeviceTest. Product unchanged. Saved XML in artifacts/android-ux-2026-11-06/task7-red-unit/. UI test APK assembly did not complete; no UI RED claimed.
+- Product implementation, GREEN device/domain tests, independent review and separate commit pending.
+- Final common helper exit0,BUILD SUCCESSFUL59s;106unit tests/16suites/0failures/errors;lint0errors16originalwarnings,bothAPKs. Final7class device run AppointmentClientSelectionTest,ClientContactFormTest,AppointmentEditorPersistenceTest,DeviceIntentTest,ClientFormValidationTest,DevicePersistenceTest,DeviceClockPersistenceTest:35PASS,exit0,48.594s. Authoritative artifacts/android-ux-2026-11-06/task7-green-instrumentation.log.
+- Device checks cover whole inline-container visibility initial/recreated/toggled, retained raw drafts, selected-client saves, real SQLite conflict retry with same client ID, exact hidden legacy recipient, blank-recipient client save, and synthetic manual intent payload without recipient extras. No messenger launched or message sent. Independent review pending.
+
+- Independent /root/task7_review approved specification7a/7b and code quality; no Critical/Important findings or acceptance evidence gaps. Reviewed unchanged stale/lifecycle and persisted-ID paths plus current XML/device evidence. Separate Task7 commit pending.

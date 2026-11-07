@@ -33,7 +33,7 @@ object ClientsScreen {
   val enabled=Switch(a).apply { text="Готувати нагадування"; isChecked=original.reminder.enabled; a.identify(this); setOnCheckedChangeListener { _,_->a.changed() } }; p.addView(enabled)
   val channel=Spinner(a).apply { adapter=ArrayAdapter(a,android.R.layout.simple_spinner_dropdown_item,Channel.values().map { it.title }); setSelection(original.reminder.channel.ordinal); a.identify(this) }; p.addView(channel)
   channel.onItemSelectedListener=object:AdapterView.OnItemSelectedListener { override fun onNothingSelected(parent:AdapterView<*>?) {} ; override fun onItemSelected(parent:AdapterView<*>?,view:View?,position:Int,id:Long) { if(position!=original.reminder.channel.ordinal) a.changed() } }
-  val recipient=a.field(p,"Одержувач у месенджері",original.reminder.recipient)
+  p.addView(t.text("Одержувача ви обираєте в месенджері під час ручного надсилання."))
   val lead=a.field(p,"За скільки хвилин (1–525600 для нагадувань)",original.reminder.leadMinutes.toString(),InputType.TYPE_CLASS_NUMBER)
   val template=a.field(p,"Шаблон: [ім’я], [дата], [час], [послуги]",original.reminder.template,InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE)
   p.addView(t.button("Зберегти клієнта") {
@@ -46,7 +46,7 @@ object ClientsScreen {
    if(invalid!=null) { invalid.first.error=invalid.second; invalid.first.requestFocus(); return@button }
    val minutes=lead.text.toString().toIntOrNull()
    if(minutes==null || minutes !in 0..525600 || enabled.isChecked && minutes==0) { lead.error="Для увімкненого нагадування вкажіть 1–525600 хвилин"; lead.requestFocus(); return@button }
-   val client=original.copy(firstName=name.text.toString().trim(),phone=phone.text.toString(),surname=surname.text.toString().trim(),patronymic=patronymic.text.toString().trim(),note=note.text.toString(),color=color(),reminder=ReminderPreferences(enabled.isChecked,Channel.values()[channel.selectedItemPosition],recipient.text.toString().trim(),minutes,template.text.toString()))
+   val client=original.copy(firstName=name.text.toString().trim(),phone=phone.text.toString(),surname=surname.text.toString().trim(),patronymic=patronymic.text.toString().trim(),note=note.text.toString(),color=color(),reminder=original.reminder.copy(enabled=enabled.isChecked,channel=Channel.values()[channel.selectedItemPosition],leadMinutes=minutes,template=template.text.toString()))
    try { Rules.validateClient(client) } catch(e: ValidationException) { error.text=a.message(e); return@button }
    val commit = { a.save(error,{ r->r.saveClient(client) }) { a.finish("clients") } }
    // Duplicate phone never acts as an upsert key: this form retains its own UUID.

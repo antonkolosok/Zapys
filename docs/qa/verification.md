@@ -1,5 +1,12 @@
 # Verification evidence — updated 2026-11-07
 
+## Task 7 final test evidence (2026-11-07)
+
+- RED common helper exit1,BUILD FAILED42s,106tests7expectedfailures: three selected-client/hidden-inline/retry failures and four blank-recipient validation/actionability failures. Saved XML artifacts/android-ux-2026-11-06/task7-red-unit/. Product unchanged; no UI RED claimed because testAPK assembly did not complete.
+- Final common helper exit0,BUILD SUCCESSFUL59s;106unit0failures/errors,16suites,lint0errors16originalwarnings,bothAPKs. Final device filter AppointmentClientSelectionTest,ClientContactFormTest,AppointmentEditorPersistenceTest,DeviceIntentTest,ClientFormValidationTest,DevicePersistenceTest,DeviceClockPersistenceTest:35PASS,48.594s,exit0. Log artifacts/android-ux-2026-11-06/task7-green-instrumentation.log.
+- Coverage: whole inline-container hidden labels/fields initial/recreated; invalid raw input retained through toggles/recreation; selected-client save creates no client; clear selection restores validation/focus; actual SQLite conflict after inline client persistence and retry reuses identity; exact hidden legacy recipient and blank-recipient enabled save; synthetic ACTION_SEND payload without recipient-address extras. Existing stale/time/terminal/lifecycle and phone/name/contact/device persistence regressions retained. No actual message send or contact access.
+- Independent /root/task7_review approved specification for7a/7b and code quality with no acceptance evidence gap. Separate commit tracked in active ledger.
+
 ## Task 6 test and visual evidence (2026-11-07)
 
 - RED actual create/edit ordering tests:2tests2expectedfailures0errors,contact child index19 instead of2; product unchanged. Common helper compiled tests successfully. Log artifacts/android-ux-2026-11-06/task6-red-instrumentation.log.

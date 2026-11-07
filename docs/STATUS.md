@@ -1,10 +1,17 @@
 # Zapys — поточний стан
 
+## 2026-11-07 — Task 7 recipient and client-selection verified and reviewed
+
+- Client/reminder UI now explains manual recipient selection in the messenger. Legacy recipient properties and JSON remain exact; enabled reminders with blank recipients use the existing schedule/state/lifecycle gates.
+- An existing selected client takes precedence over inactive inline text. The whole inline form hides initially and after recreation; toggling back preserves raw input. Client persistence followed by an appointment conflict/retry reuses the same identity.
+- Common helper passed:106unit tests,lint0errors/16originalwarnings,bothAPKs. Device35PASS covers selection/recreation, real SQLite retry, legacy recipient preservation, manual intent payload and phone/name/contact/reminder regressions. No actual messenger launch or message send.
+- /root/task7_review approved specification for both7a/7b and code quality, no blockers. Task7 separate commit pending,Tasks8–10pending. No PR,merge or release.
+
 ## 2026-11-07 — Task 6 contact action verified and reviewed
 
 - Contact action now follows the heading/back area and precedes name/phone on both client create and edit forms. Existing binding, provider flow and field restoration IDs remain unchanged.
 - Common helper passed:101unit tests,lint0errors/16originalwarnings,bothAPKs. Device28PASS covers ordering, selective synthetic result/cancel/read failure, manual entry, actual recreation/ownership, phone/name validation and color-state regression. No real contacts accessed.
-- Twenty-four native renders cover light/dark,320/360/411dp,font1/2,create/edit. Four narrow light/dark normal/large images inspected; /root/task6_review approved specification and quality, no blockers. Task6 commit pending,Tasks7–10pending. No PR,merge or release.
+- Twenty-four native renders cover light/dark,320/360/411dp,font1/2,create/edit. Four narrow light/dark normal/large images inspected; /root/task6_review approved specification and quality, no blockers. Task6 complete in commit94bd905;Task7 in progress,Tasks8–10pending. No PR,merge or release.
 
 ## 2026-11-07 — Task 5 name limits verified and reviewed
 
